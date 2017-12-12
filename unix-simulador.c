@@ -64,6 +64,12 @@ void main(void)
 			   para o cliente */
 
 			close(sockfd);
+
+			simulador.max_cliente = 40;
+			simulador.contador_time = 0;
+			simulador.aberto =1;
+			timersimulador();
+			cria_cliente();
 			montanha_russa(newsockfd);
 			exit(0);
 		}

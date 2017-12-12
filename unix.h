@@ -18,3 +18,29 @@ int writen(int fd, char *ptr, int nbytes);
 int readline(int fd, char *ptr, int maxlen);
 void ecra(int sockfd);
 void montanha_russa(int sockfd);
+
+//variaveis globais
+struct parque
+{
+
+        int max_cliente;
+        int contador_time;
+        int aberto;
+
+} ;
+struct cliente_struct
+{
+        int id;
+        int vip;
+        int prioridade;
+        int tempo_chegou;
+        int tempo_saiu;
+        int tempo_esperado;
+
+
+};
+
+
+struct cliente_struct cliente[50];
+struct parque simulador;
+pthread_t static t_cliente [50];
