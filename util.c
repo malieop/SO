@@ -90,6 +90,8 @@ char * protocologoComunicacao(char * codigo, char * separador)
 		case 2: acao = "esta na fila para";
 		break;
 		case 3: acao = "já não se encontra";
+                break;
+                case 4: acao = "desistiu de entrar";
 		break;
 		default: acao = "ERRO!";
 	}

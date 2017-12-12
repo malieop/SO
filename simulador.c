@@ -24,7 +24,7 @@ void montanha_russa(int socket)
   else
   {
     char lineCreation[50];
-    sprintf(lineCreation, "%i;%i;%c", pthread_self(), 3, 'e');
+    sprintf(lineCreation, "%i;%i;%c", pthread_self(), 4, 'e');
     printf("%s\n",  pthread_self());
   	write((int )newsockfd, lineCreation, strlen(lineCreation));
   }
