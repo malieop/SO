@@ -34,7 +34,7 @@ void main(void)
 	if (bind(sockfd, (struct sockaddr *) &serv_addr, servlen) < 0)
 		err_dump("server, can't bind local address");
 
-	/* Servidor pronto a aceitar 5 clientes para o socket stream */
+	/* Servidor pronto a aceitar 1 clientes para o socket stream */
 
 	listen(sockfd, 1);
 
