@@ -6,38 +6,38 @@
    Bloqueia at� conseguir ler os nbytes ou dar erro */
 int readn(int fd, char *ptr, int nbytes)
 {
-	int nleft, nread;
+        int nleft, nread;
 
-	nleft = nbytes;
-	while (nleft > 0) {
-		nread = read (fd, ptr, nleft);
-		if (nread < 0)
-			return (nread);
-		else if (nread == 0)
-			break;
+        nleft = nbytes;
+        while (nleft > 0) {
+                nread = read (fd, ptr, nleft);
+                if (nread < 0)
+                        return (nread);
+                else if (nread == 0)
+                        break;
 
-		nleft -= nread;
-		ptr += nread;
-	}
-	return (nbytes - nleft);
+                nleft -= nread;
+                ptr += nread;
+        }
+        return (nbytes - nleft);
 }
 
 /* Escreve nbytes num ficheiro/socket.
    Bloqueia at� conseguir escrever os nbytes ou dar erro */
 int writen(int fd, char *ptr, int nbytes)
 {
-	int nleft, nwritten;
+        int nleft, nwritten;
 
-	nleft = nbytes;
-	while (nleft > 0) {
-		nwritten = write(fd, ptr, nleft);
-		if (nwritten <= 0)
-			return(nwritten);
+        nleft = nbytes;
+        while (nleft > 0) {
+                nwritten = write(fd, ptr, nleft);
+                if (nwritten <= 0)
+                        return(nwritten);
 
-		nleft -= nwritten;
-		ptr += nwritten;
-	}
-	return(nbytes - nleft);
+                nleft -= nwritten;
+                ptr += nwritten;
+        }
+        return(nbytes - nleft);
 }
 
 /* L� uma linha de um ficheiro/socket (at� \n, maxlen ou \0).
@@ -45,73 +45,119 @@ int writen(int fd, char *ptr, int nbytes)
    Retorna quantos caracteres conseguiu ler */
 int readline(int fd, char *ptr, int maxlen)
 {
-	int n, rc;
-	char c;
+        int n, rc;
+        char c;
 
-	for (n=1; n<maxlen; n++) {
-		if ((rc = read(fd, &c, 1)) == 1) {
-			*ptr++ = c;
-			if (c == '\n')
-				break;
-		} else if (rc == 0) {
-			if (n == 1)
-				return(0);
-			else
-				break;
-		} else
-			return (-1);
-	}
+        for (n=1; n<maxlen; n++) {
+                if ((rc = read(fd, &c, 1)) == 1) {
+                        *ptr++ = c;
+                        if (c == '\n')
+                                break;
+                } else if (rc == 0) {
+                        if (n == 1)
+                                return(0);
+                        else
+                                break;
+                } else
+                        return (-1);
+        }
 
-	/* N�o esquecer de terminar a string */
+        /* N�o esquecer de terminar a string */
 
-	*ptr = 0;
+        *ptr = 0;
 
-	/* Note-se que n foi incrementado de modo a contar
-	   com o \n ou \0 */
+        /* Note-se que n foi incrementado de modo a contar
+           com o \n ou \0 */
 
-	return (n);
+        return (n);
 }
 
 /* Mensagem de erro */
 void err_dump(char *msg)
 {
-	perror(msg);
-	exit(1);
+        perror(msg);
+        exit(1);
 }
 
 char * protocologoComunicacao(char * codigo, char * separador)
 {
-	int *idCliente = strtok(codigo, separador);
+        int *idCliente = strtok(codigo, separador);
 
-	char * acao;
-	switch (strtol(strtok(NULL, separador),NULL,0)) { //strtol - converte char para inteiro
-		case 1: acao = "entrou";
-		break;
-		case 2: acao = "esta na fila para";
-		break;
-		case 3: acao = "já não se encontra";
+        char * acao;
+        switch (strtol(strtok(NULL, separador),NULL,0)) { //strtol - converte char para inteiro
+        case 1: acao = "entrou";
                 break;
-                case 4: acao = "desistiu de entrar";
-		break;
-		default: acao = "ERRO!";
-	}
+        case 2: acao = "esta na fila para";
+                break;
+        case 3: acao = "já não se encontra";
+                break;
+        case 4: acao = "desistiu de entrar";
+                break;
+        default: acao = "ERRO!";
+        }
 
-	char * lugar;
-	switch (*strtok(NULL, separador)) {
-		case 'a': lugar = "no parque";
-		break;
-		case 'b': lugar = "na bilhetaria";
-		break;
-		case 'c': lugar = "na montanha russa 1";
-		break;
-		case 'd': lugar = "na montanha russa 2";
-		break;
-		case 'e': lugar = "na montanha russa 2";
-		break;
-		default: lugar = "ERRO!";
-	}
+        char * lugar;
+        switch (*strtok(NULL, separador)) {
+        case 'a': lugar = "no parque";
+                break;
+        case 'b': lugar = "na bilhetaria";
+                break;
+        case 'c': lugar = "na montanha russa 1";
+                break;
+        case 'd': lugar = "na montanha russa 2";
+                break;
+        case 'e': lugar = "na montanha russa 2";
+                break;
+        default: lugar = "ERRO!";
+        }
 
-	char * fraseCompleta = (char *) malloc(sizeof(char) * 3); //Não sei bem, mas a internet disse e funciona!
-	sprintf(fraseCompleta, "O cliente %s %s %s.", idCliente, acao, lugar);
-	return fraseCompleta;
- }
+        char * fraseCompleta = (char *) malloc(sizeof(char) * 3); //Não sei bem, mas a internet disse e funciona!
+        sprintf(fraseCompleta, "O cliente %s %s %s.", idCliente, acao, lugar);
+        return fraseCompleta;
+}
+
+struct estatisticas atualizaDadosEstatisticas(char * codigo, char * separador, struct estatisticas stats)
+{
+        strtok(codigo, separador); //id do cliente, não é necessário
+
+        switch (strtol(strtok(NULL, separador),NULL,0)) {  //strtol - converte char para inteiro
+        case 1:          //entrou
+                switch (*strtok(NULL, separador)) {
+                case 'a':
+                        break;
+                case 'b':
+                        stats.total_parque++;
+                        break;
+                case 'c': stats.total_montanha1++;
+                        break;
+                case 'd': stats.total_montanha2++;
+                        break;
+                case 'e': stats.total_montanha3++;
+                        break;
+                }
+                break;
+        case 4:         //desistiu
+                stats.tempo_desistencias += 10;
+                stats.total_desistencias++;
+                break;
+        }
+
+        return stats;
+
+}
+
+void escreveEstatisticasFicheiro(struct estatisticas stats)
+{
+        FILE *file;
+
+        file = fopen("estatisticas", "w+"); //w+ - abre ficheiro, se não existe cria
+        fprintf(file, "ESTATISTICAS\n");
+        fprintf(file, "Número de pessoas que entrou no parque: %d pessoas\n ", stats.total_parque);
+        fprintf(file, "Número de pessoas que entrou na montanha russa 1: %d pessoas\n ", stats.total_montanha1);
+        fprintf(file, "Número de pessoas que entrou na montanha russa 2: %d pessoas\n ", stats.total_montanha2);
+        fprintf(file, "Número de pessoas que entrou na montanha russa 3: %d pessoas\n ", stats.total_montanha3);
+        fprintf(file, "Número de pessoas que desistiu enquanto estava na filha: %d pessoas\n ", stats.total_desistencias);
+        fprintf(file, "Tempo media antes de desistencia: %d mins\n ", (stats.tempo_desistencias/stats.total_desistencias));
+
+        fclose(file);
+}

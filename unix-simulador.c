@@ -37,7 +37,7 @@ void main(void)
 	/* Servidor pronto a aceitar 5 clientes para o socket stream */
 
 	listen(sockfd, 1);
-        
+
         clilen = sizeof(cli_addr);
         newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 
@@ -46,10 +46,10 @@ void main(void)
 
         printf("Simulador\n");
         for (;;) {
-
                 close(sockfd);
                 montanha_russa(newsockfd);
                 exit(0);
         }
         close(newsockfd);
+
 }
