@@ -37,41 +37,19 @@ void main(void)
 	/* Servidor pronto a aceitar 5 clientes para o socket stream */
 
 	listen(sockfd, 1);
-	printf("Simulador\n");
-	for (;;) {
+        
+        clilen = sizeof(cli_addr);
+        newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 
-		/* N�o esquecer que quando o servidor aceita um cliente cria um
-		   socket para comunicar com ele. O primeiro socket (sockfd) fica
-		   � espera de mais clientes */
+        if (newsockfd < 0) err_dump("server: accept error");
 
-		clilen = sizeof(cli_addr);
-		newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr,
-				   &clilen);
-		if (newsockfd < 0)
-			err_dump("server: accept error");
 
-		/* Lan�a processo filho para lidar com o cliente */
+        printf("Simulador\n");
+        for (;;) {
 
-		if ((childpid = fork()) < 0)
-			err_dump("server: fork error");
-
-		else if (childpid == 0) {
-
-			/* Processo filho que vai atender o cliente.
-			   Fechar sockfd � sanit�rio, j� que n�o �
-			   utilizado pelo processo filho.
-			   Os dados recebidos do cliente s�o reenviados
-			   para o cliente */
-
-			close(sockfd);
-			montanha_russa(newsockfd);
-			exit(0);
-		}
-
-		/* Processo pai.
-		   Fechar newsockfd � sanit�rio, j� que n�o �
-		   utilizado pelo processo pai */
-
-		close(newsockfd);
-	}
+                close(sockfd);
+                montanha_russa(newsockfd);
+                exit(0);
+        }
+        close(newsockfd);
 }
