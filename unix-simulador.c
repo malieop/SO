@@ -44,12 +44,23 @@ void main(void)
         if (newsockfd < 0) err_dump("server: accept error");
 
 
-        printf("Simulador\n");
-        for (;;) {
-                close(sockfd);
-                montanha_russa(newsockfd);
-                exit(0);
-        }
-        close(newsockfd);
+
+			sem_init(&s_tam_fila_bilheteira,0, 10);
+			simulador.perc_prioridade = 10;
+			simulador.max_cliente = 500;
+			simulador.contador_time = 0;
+			simulador.aberto =1;
+			timersimulador();
+			cria_cliente();
+			//montanha_russa(newsockfd);
+			for (int i = 0; i < conta_cliente; i++) {
+				printf("putas\n");
+			 	 pthread_join(t_cliente[i], NULL);
+			 }
+
+		}
+
+			 close(sockfd); //cuidado com isto senão não deixa acabar as threads
+
 
 }

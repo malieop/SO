@@ -1,9 +1,14 @@
 #include "unix.h"
 
 #define MAXLINE 512
-/* Servidor do tipo socket stream.
-   Manda linhas recebidas de volta para o cliente */
-//int newsockfd;
+
+
+
+
+
+
+
+
 
 void * threadRoutine(newsockfd)
 {
@@ -11,6 +16,92 @@ void * threadRoutine(newsockfd)
         sprintf(lineToWrite, "Olá, sou o cliente %i", pthread_self());
         printf("%s\n",lineToWrite);
 }
+void * virtualtime() // função que incrementa variavel do tempo virtual
+{
+        while (simulador.aberto) {
+                //gettime(auxtime);
+                usleep(1500000);
+                simulador.contador_time++;
+
+        }
+}
+void gettime( int auxtime) { // funçao para obter o tempo virtual
+
+        int horas = 8;
+        int min;
+
+        horas = horas + auxtime/60;
+        min = auxtime % 60;
+
+        printf ("São %dh%dmin",horas, min);
+}
+void timersimulador() // cria a thread para a contagem do tempo virtual
+{
+        pthread_t thread;
+        if((pthread_create(&(thread),NULL,(void *)virtualtime, NULL))!=0)
+        {
+                err_dump("pthread_create: erro criação thread");
+        }
+        else printf("criou timer\n" );
+}
+void *trata_cliente(int id)
+{ //para usar o rand()
+        time_t t;
+        srand((unsigned) time(&t));
+        gettime( simulador.contador_time);
+        printf(", O Cliente nº%d chegou a bilheteria.\n",id);
+
+        if((rand()%100)< simulador.perc_prioridade) // define se o cliente é prioritário ou não
+        {cliente[id].prioridade = 1; }
+        else
+        {cliente[id].prioridade = 0; }
+        //METER SEMAFORO DO TAMANHO tam_fila_bilheteiraDA FILA DE ESPERA PARA ENTRAR NO PARQUE
+
+        sem_wait(&s_tam_fila_bilheteira);
+
+        cliente[id].divertimento = rand()%3;
+
+        if(cliente[id].prioridade == 1)
+        {
+                gettime(simulador.contador_time);
+                printf(", O Cliente nº%d, sem prioridade, entrou no parque.\n",id);
+        }
+        else
+        {
+                gettime(simulador.contador_time);
+                printf(", O Cliente nº%d,com prioridade, entrou no parque.\n",id);
+        }
+        usleep(150000);
+        usleep(150000);
+        usleep(150000);
+        usleep(150000);
+        usleep(150000);
+        usleep(150000);
+        usleep(150000);
+        usleep(150000);
+        usleep(150000);
+        usleep(150000);
+        usleep(150000);
+        usleep(150000);
+        sem_post(&s_tam_fila_bilheteira);
+
+}
+void cria_cliente()
+{
+        for (int i = 0; i < simulador.max_cliente; i++) {
+                usleep(150000);
+                conta_cliente++;
+
+                if((pthread_create(&(t_cliente[i]),NULL,(void *)trata_cliente, i))!=0)
+                {
+                        err_dump("pthread_create: erro criação thread");
+                }
+                else{
+                        ;
+                }
+        }
+}
+
 
 void montanha_russa(int socket)
 {
@@ -24,7 +115,7 @@ void montanha_russa(int socket)
         else
         {
                 char lineCreation[50];
-                sprintf(lineCreation, "%i;%i;%c", pthread_self(), 4, 'e');
+                sprintf(lineCreation, "%i;%i;%c", pthread_self(), 3, 'e');
                 printf("%s\n",  pthread_self());
                 write((int )newsockfd, lineCreation, strlen(lineCreation));
         }
