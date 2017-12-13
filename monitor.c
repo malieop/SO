@@ -1,6 +1,6 @@
 #include "unix.h"
 #define MAXLINE 512
-
+//ESTOU AQUI
 void ecra(int sockfd)
 {
 	char line[MAXLINE];

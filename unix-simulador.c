@@ -50,34 +50,24 @@ void main(void)
 		if (newsockfd < 0)
 			err_dump("server: accept error");
 
-		/* Lan�a processo filho para lidar com o cliente */
 
-		if ((childpid = fork()) < 0)
-			err_dump("server: fork error");
 
-		else if (childpid == 0) {
-
-			/* Processo filho que vai atender o cliente.
-			   Fechar sockfd � sanit�rio, j� que n�o �
-			   utilizado pelo processo filho.
-			   Os dados recebidos do cliente s�o reenviados
-			   para o cliente */
-
-			close(sockfd);
-
-			simulador.max_cliente = 40;
+			sem_init(&s_tam_fila_bilheteira,0, 10);
+			simulador.perc_prioridade = 10;
+			simulador.max_cliente = 500;
 			simulador.contador_time = 0;
 			simulador.aberto =1;
 			timersimulador();
 			cria_cliente();
-			montanha_russa(newsockfd);
-			exit(0);
+			//montanha_russa(newsockfd);
+			for (int i = 0; i < conta_cliente; i++) {
+				printf("putas\n");
+			 	 pthread_join(t_cliente[i], NULL);
+			 }
+
 		}
 
-		/* Processo pai.
-		   Fechar newsockfd � sanit�rio, j� que n�o �
-		   utilizado pelo processo pai */
+			 close(sockfd); //cuidado com isto senão não deixa acabar as threads
 
-		close(newsockfd);
-	}
+
 }
