@@ -58,7 +58,7 @@ void main(void)
 			 	 pthread_join(t_cliente[i], NULL);
 			 }
 
-		}
+		
 
 			 close(sockfd); //cuidado com isto senão não deixa acabar as threads
 
