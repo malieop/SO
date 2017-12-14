@@ -2,13 +2,7 @@
 
 #define MAXLINE 512
 
-
-
-
-
-
-
-
+int newsockfd;
 
 void * threadRoutine(newsockfd)
 {
@@ -46,10 +40,15 @@ void timersimulador() // cria a thread para a contagem do tempo virtual
 }
 void *trata_cliente(int id)
 { //para usar o rand()
+
         time_t t;
         srand((unsigned) time(&t));
         gettime( simulador.contador_time);
+        char lineBilheteria [50];
+        sprintf(lineBilheteria, "%d;2;a", id);
         printf(", O Cliente nº%d chegou a bilheteria.\n",id);
+
+        write(newsockfd, lineBilheteria, strlen(lineBilheteria));
 
         if((rand()%100)< simulador.perc_prioridade) // define se o cliente é prioritário ou não
         {cliente[id].prioridade = 1; }
@@ -85,9 +84,11 @@ void *trata_cliente(int id)
         usleep(150000);
         sem_post(&s_tam_fila_bilheteira);
 
+
 }
-void cria_cliente()
+void cria_cliente(int socket)
 {
+        newsockfd = socket;
         for (int i = 0; i < simulador.max_cliente; i++) {
                 usleep(150000);
                 conta_cliente++;
@@ -97,7 +98,10 @@ void cria_cliente()
                         err_dump("pthread_create: erro criação thread");
                 }
                 else{
-                        ;
+                        char lineCriacao [50];
+                        sprintf(lineCriacao, "%d;1;a", i);
+                        printf("O Cliente nº%d chegou ao parque.\n",i);
+                        write(newsockfd, lineCriacao, strlen(lineCriacao));
                 }
         }
 }
@@ -105,19 +109,15 @@ void cria_cliente()
 
 void montanha_russa(int socket)
 {
-        int newsockfd = socket;
-
-        pthread_t thread;
-        if((pthread_create(&(thread),NULL,threadRoutine, (void *) newsockfd))!=0)
-        {
-                err_dump("pthread_create: erro criação thread");
-        }
-        else
-        {
-                char lineCreation[50];
-                sprintf(lineCreation, "%i;%i;%c", pthread_self(), 3, 'e');
-                printf("%s\n",  pthread_self());
-                write((int )newsockfd, lineCreation, strlen(lineCreation));
-        }
-        pthread_join (thread, NULL);
+        // newsockfd = socket;
+        //
+        // pthread_t thread;
+        // else
+        // {
+        //         char lineCreation[50];
+        //         sprintf(lineCreation, "%i;%i;%c", pthread_self(), 3, 'e');
+        //         printf("%s\n",  pthread_self());
+        //         write((int )newsockfd, lineCreation, strlen(lineCreation));
+        // }
+        // pthread_join (thread, NULL);
 }

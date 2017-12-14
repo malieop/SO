@@ -47,18 +47,18 @@ void main(void)
 
 			sem_init(&s_tam_fila_bilheteira,0, 10);
 			simulador.perc_prioridade = 10;
-			simulador.max_cliente = 500;
+			simulador.max_cliente = 50;
 			simulador.contador_time = 0;
 			simulador.aberto =1;
 			timersimulador();
-			cria_cliente();
+			cria_cliente(newsockfd);
 			//montanha_russa(newsockfd);
 			for (int i = 0; i < conta_cliente; i++) {
-				printf("putas\n");
+
 			 	 pthread_join(t_cliente[i], NULL);
 			 }
 
-		
+
 
 			 close(sockfd); //cuidado com isto senão não deixa acabar as threads
 

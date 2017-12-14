@@ -85,28 +85,32 @@ char * protocologoComunicacao(char * codigo, char * separador)
 
         char * acao;
         switch (strtol(strtok(NULL, separador),NULL,0)) { //strtol - converte char para inteiro
-        case 1: acao = "entrou";
+        case 1: acao = "chegou";
                 break;
-        case 2: acao = "esta na fila para";
+        case 2: acao = "entrar";
                 break;
-        case 3: acao = "já não se encontra";
+        case 3: acao = "esta na fila para comprar";
                 break;
-        case 4: acao = "desistiu de entrar";
+        case 4: acao = "esta na fila para entrar";
+                break;
+        case 5: acao = "já não se encontra";
+                break;
+        case 6: acao = "desistiu de entrar";
                 break;
         default: acao = "ERRO!";
         }
 
         char * lugar;
         switch (*strtok(NULL, separador)) {
-        case 'a': lugar = "no parque";
+        case 'a': lugar = "ao recinto do parque";
                 break;
-        case 'b': lugar = "na bilhetaria";
+        case 'b': lugar = "no recinto do parque";
                 break;
-        case 'c': lugar = "na montanha russa 1";
+        case 'c': lugar = "na bilhetaria";
                 break;
-        case 'd': lugar = "na montanha russa 2";
+        case 'd': lugar = "na montanha russa Takabisha";
                 break;
-        case 'e': lugar = "na montanha russa 2";
+        case 'e': lugar = "na montanha russa Fury 325";
                 break;
         default: lugar = "ERRO!";
         }
