@@ -92,7 +92,7 @@ char * protocologoComunicacao(char * codigo, char * separador)
         case 3: acao = "esta na fila para comprar";
                 break;
         case 4: acao = "esta na fila para entrar";
-                break;
+             break;
         case 5: acao = "já não se encontra";
                 break;
         case 6: acao = "desistiu de entrar";
