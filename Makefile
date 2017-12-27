@@ -13,7 +13,7 @@ CC = gcc
 #Bibliotecas
 #LIBS = -lns -lnsl
 #LIBS = -lm -lnsl
-LIBS = -lpthread
+LIBS = -lpthread -lm
 #LIBS = -lsocket -lnsl -lns
 #LIBS = -lsocket -lnsl -lns
 

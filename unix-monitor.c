@@ -24,10 +24,10 @@ void main(void)
 
         /* Envia as linhas lidas do teclado para o socket */
         printf("Monitor\n");
-        for(;;) {
+        //for(;;) {
                 ecra(sockfd);
-        }
-        
+        //}
+
         /* Fecha o socket e termina */
         close(sockfd);
         exit(0);
