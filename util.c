@@ -121,7 +121,7 @@ char * protocologoComunicacao(char * codigo, char * separador)
 
         int aux = strlen(fraseCompleta);
         aux = 79 - aux;
-        sprintf(fraseCompleta, "%s %*s |", fraseCompleta, aux, " "); //adiciona os espaços vazios para enquadrar no ecrã
+        sprintf(fraseCompleta, "%s %*s │", fraseCompleta, aux, " "); //adiciona os espaços vazios para enquadrar no ecrã
 
         return fraseCompleta;
 }

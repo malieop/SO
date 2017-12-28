@@ -1,6 +1,6 @@
 #include "unix.h"
 #define MAXLINE 512
-#define SIZEARRAY 20
+#define SIZEARRAY 17
 //ESTOU AQUI
 int acertaStatsN(int stat)
 {
@@ -82,7 +82,7 @@ void printStats(struct estatisticas stats)
 
 }
 
-void printReg(char * registoDeAtividade[])
+void printReg(char registoDeAtividade[SIZEARRAY][90])
 {
         int i;
         printf("   ├─[Registo de Atividade]──────────────────────────────────────────────────┤\n");
@@ -90,7 +90,7 @@ void printReg(char * registoDeAtividade[])
         {
                 char * pntThroughPnt = registoDeAtividade[i];
 
-                if(strcmp(pntThroughPnt, "0") != 0) printf("%s\n", pntThroughPnt);
+                if(strcmp(pntThroughPnt, "0") != 0)printf("%s\n", pntThroughPnt);
                 else printf("   │                                                                         │\n");
 
         }
@@ -106,13 +106,12 @@ void printRod()
         printf("   └─────────────────────────────────────────────────────────────────────────┘\n");
 
 }
+
 void ecra(int sockfd)
 {
         struct estatisticas stats = {100000, 10, 100, 0, 0, 0};
-        char * registoDeAtividade[SIZEARRAY];
-        fo
-        int i;
-        for(i = 0; i < SIZEARRAY; i++ ){registoDeAtividade[i] = "0";}
+        char registoDeAtividade[SIZEARRAY][90];
+        int i; for(i = 0; i < SIZEARRAY; i++){strcpy(registoDeAtividade[i], "0");}
         char line[MAXLINE];
         int n;
         int nArray = 0;
@@ -127,22 +126,21 @@ void ecra(int sockfd)
 
                 stats = atualizaDadosEstatisticas(line, ";", stats); //atualiza a estrutura consoante a mensagem recebida
 
-                // if(nArray <= SIZEARRAY - 1)
-                // {
-                        registoDeAtividade[nArray] = protocologoComunicacao(auxLine, ";"); //'descodifica' a mensagem recebida
-
+                if(nArray <= SIZEARRAY - 1)
+                {
+                        strcpy( registoDeAtividade[nArray], protocologoComunicacao(auxLine, ";"));
                         nArray++;
-                // }
-                // else
-                // {
-                //         char * temp;
-                //         int i;
-                //         for(i = 0; i < SIZEARRAY; i++)
-                //         {
-                //                 strcpy(registoDeAtividade[i], *registoDeAtividade[i+1]);
-                //         }
-                //         registoDeAtividade[SIZEARRAY-1] = protocologoComunicacao(auxLine, ";");
-                // }
+                }
+                else
+                {
+                        char * temp;
+                        int i;
+                        for(i = 0; i < SIZEARRAY; i++)
+                        {
+                                strcpy(registoDeAtividade[i], registoDeAtividade[i+1]);
+                        }
+                        strcpy( registoDeAtividade[SIZEARRAY-1], protocologoComunicacao(auxLine, ";"));
+                }
 
                 bzero(line,MAXLINE);
 
