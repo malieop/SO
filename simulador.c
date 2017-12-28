@@ -90,7 +90,7 @@ void cria_cliente(int socket)
 {
         newsockfd = socket;
         for (int i = 0; i < simulador.max_cliente; i++) {
-                usleep(150000);
+                usleep(1500000);
                 conta_cliente++;
 
                 if((pthread_create(&(t_cliente[i]),NULL,(void *)trata_cliente, i))!=0)

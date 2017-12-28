@@ -1,5 +1,6 @@
 #include "unix.h"
 #define MAXLINE 512
+#define SIZEARRAY 20
 //ESTOU AQUI
 int acertaStatsN(int stat)
 {
@@ -81,10 +82,18 @@ void printStats(struct estatisticas stats)
 
 }
 
-void printReg()
+void printReg(char * registoDeAtividade[])
 {
+        int i;
         printf("   ├─[Registo de Atividade]──────────────────────────────────────────────────┤\n");
-        printf("   │                                                                         │\n");
+        for (i = 0; i < SIZEARRAY; i++)
+        {
+                char * pntThroughPnt = registoDeAtividade[i];
+
+                if(strcmp(pntThroughPnt, "0") != 0) printf("%s\n", pntThroughPnt);
+                else printf("   │                                                                         │\n");
+
+        }
         printf("   ├─────────────────────────────────────────────────────────────────────────┤\n");
 }
 void printRod()
@@ -100,30 +109,52 @@ void printRod()
 void ecra(int sockfd)
 {
         struct estatisticas stats = {100000, 10, 100, 0, 0, 0};
-
+        char * registoDeAtividade[SIZEARRAY];
+        fo
+        int i;
+        for(i = 0; i < SIZEARRAY; i++ ){registoDeAtividade[i] = "0";}
         char line[MAXLINE];
         int n;
+        int nArray = 0;
         char sendline[MAXLINE];
 
-        printCab();
-        printStats(stats);
-        printReg();
-        printRod();
-
+        for(;;) {
         if((n = read(sockfd, line, MAXLINE-1)) > 0)
         {
-
                 //é preciso porque partimos a string duas vezes, e não podemos fazer no mesmo apontador
                 char * auxLine = (char *) malloc(sizeof(char) * 3); //aloca memoria para auxLine
                 strcpy(auxLine, line); // copia a line para a auxLine
 
                 stats = atualizaDadosEstatisticas(line, ";", stats); //atualiza a estrutura consoante a mensagem recebida
 
-                char * mensagemCompleta = protocologoComunicacao(auxLine, ";"); //'descodifica' a mensagem recebida
-                printf("%s\n", mensagemCompleta);
-                bzero(line,MAXLINE);
-        }
-        else if(n<0) printf("ERRO LENDO DA SOCKFD");
+                // if(nArray <= SIZEARRAY - 1)
+                // {
+                        registoDeAtividade[nArray] = protocologoComunicacao(auxLine, ";"); //'descodifica' a mensagem recebida
 
+                        nArray++;
+                // }
+                // else
+                // {
+                //         char * temp;
+                //         int i;
+                //         for(i = 0; i < SIZEARRAY; i++)
+                //         {
+                //                 strcpy(registoDeAtividade[i], *registoDeAtividade[i+1]);
+                //         }
+                //         registoDeAtividade[SIZEARRAY-1] = protocologoComunicacao(auxLine, ";");
+                // }
+
+                bzero(line,MAXLINE);
+
+                printCab();
+                printStats(stats);
+                printReg(registoDeAtividade);
+                printRod();
+
+                int i;
+        }
+
+        else if(n<0) printf("ERRO LENDO DA SOCKFD");
+        }
 
 }

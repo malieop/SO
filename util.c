@@ -116,7 +116,13 @@ char * protocologoComunicacao(char * codigo, char * separador)
         }
 
         char * fraseCompleta = (char *) malloc(sizeof(char) * 3); //Não sei bem, mas a internet disse e funciona!
-        sprintf(fraseCompleta, "O cliente %s %s %s.", idCliente, acao, lugar);
+
+        sprintf(fraseCompleta, "   │%s • O cliente %s %s %s.", "10h00", idCliente, acao, lugar); //cooloca informação pretinente
+
+        int aux = strlen(fraseCompleta);
+        aux = 79 - aux;
+        sprintf(fraseCompleta, "%s %*s |", fraseCompleta, aux, " "); //adiciona os espaços vazios para enquadrar no ecrã
+
         return fraseCompleta;
 }
 
