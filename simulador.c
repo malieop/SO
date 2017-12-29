@@ -10,24 +10,30 @@ void * threadRoutine(newsockfd)
         sprintf(lineToWrite, "Olá, sou o cliente %i", pthread_self());
         printf("%s\n",lineToWrite);
 }
+void tempo_aberto_parque(){
+
+        simulador.tempo_aberto = (simulador.hora_de_fecho-simulador.hora_de_abertura) *60;
+        printf("%d", simulador.tempo_aberto);
+}
 void * virtualtime() // função que incrementa variavel do tempo virtual
 {
         while (simulador.aberto) {
                 //gettime(auxtime);
-                usleep(1500000);
+                usleep(150000);
                 simulador.contador_time++;
+                gettime();
 
         }
 }
-void gettime( int auxtime) { // funçao para obter o tempo virtual
+void gettime( ) { // funçao para obter o tempo virtual
 
-        int horas = 8;
+        int horas = simulador.hora_de_abertura;
         int min;
 
-        horas = horas + auxtime/60;
-        min = auxtime % 60;
+        horas = horas + simulador.contador_time/60;
+        min = simulador.contador_time % 60;
 
-        printf ("São %dh%dmin",horas, min);
+        printf ("São %dh%dmin\n",horas, min);
 }
 void timersimulador() // cria a thread para a contagem do tempo virtual
 {
@@ -38,9 +44,16 @@ void timersimulador() // cria a thread para a contagem do tempo virtual
         }
         else printf("criou timer\n" );
 }
-
-void * fury325(int socket){
+void *divertimento(){
         while(simulador.aberto) {
+                if (simulador.contador_time >= simulador.tempo_aberto) {
+                        simulador.divertimento_boolean = 0;
+                }
+        }
+}
+
+void *fury325(int socket){
+        while(simulador.divertimento_boolean) {
                 printf("FURY 325 está pronto a receber clientes\n");
                 int pessoas_fury = 0;
                 while (pessoas_fury < 4) {
@@ -48,49 +61,81 @@ void * fury325(int socket){
                         pessoas_fury++;
 
                 }
-                pthread_mutex_lock(&mutex_fury);
+                if(simulador.tempo_aberto > simulador.contador_time ) {
+                        pthread_mutex_lock(&mutex_fury);
 
-                for (int i = 0; i < pessoas_fury; i++) {
-                        num_pessoas_fury325--;
-                        sem_post(&s_cliente_fury325); // da assinala que existe 4 lugares disponiveis
+
+                        for (int i = 0; i < pessoas_fury; i++) {
+                                num_pessoas_fury325--;
+                                sem_post(&s_cliente_fury325); // da assinala que existe 4 lugares disponiveis
+                        }
+                        pthread_mutex_unlock(&mutex_fury);
+
+                        //sleep (1);
+                        printf("FURY 325 saiu\n");
+                        sleep(4); // tempo da volta da montanhavoid * fury325(int socket)
+                        printf("FURY 325 ACABOU \n");
+                        for ( int i = 0; i < pessoas_fury; i++) {
+                                sem_post(&s_finish_fury); // assinala que acabou a volta
+                                //sem_wait(&s_comunicacaofury325);
+                        }
                 }
-                pthread_mutex_unlock(&mutex_fury);
-                printf("FURY 325 saiu\n");
-                sleep (5); // tempo da volta da montanha
-                for ( int i = 0; i < pessoas_fury; i++) {
-                        sem_post(&s_finish_fury); // assinala que acabou a volta
-                }
-                printf("FURY 325 ACABOU \n");
+
+
         }
 
+      //  printf("FURY325 fechou as portas.\n" );
+        for ( int i = 0; i < num_pessoas_fury325; i++) {
+                sem_post(&s_cliente_fury325);
+                  printf("putas\n");
+                //sem_post(&s_finish_fury); // assinala que acabou a volta
+
+        }
+        printf("FURY325 fechou as portas.\n" );
 }
+
 
 
 void *cliente_fury(int id){
 
         pthread_mutex_lock(&mutex_fury);
         num_pessoas_fury325++;
-        sem_post(&s_fury325); // avisa ao fury que tem clientes
+        sem_post(&s_fury325);
+        // avisa ao fury que tem clientes
         pthread_mutex_unlock(&mutex_fury);
 
-        sem_wait(&s_cliente_fury325);// retira os cliente da fila (estão dentro do fury)
-        printf("O Cliente n%d entrou no FURY 325\n",id);
-        sem_wait(&s_finish_fury); // retira os clientes do fury
-        printf("O Cliente n%d saiu no FURY 325\n", id);
-
+        sem_wait(&s_cliente_fury325);         // retira os cliente da fila (estão dentro do fury)
+        if (simulador.contador_time < simulador.tempo_aberto -20) {
+              if(cliente[id].tempo_max_espera > (simulador.contador_time - cliente[id].tempo_chegou_divertimento)){
+                printf("O Cliente n%d entrou no FURY 325\n",id);
+                sem_wait(&s_finish_fury); // retira os clientes do fury
+                pthread_mutex_lock(&mutex_comunicacao);
+                //sem_post(&s_comunicacaofury325);
+                printf("O Cliente n%d saiu do FURY 325\n", id);
+                pthread_mutex_unlock(&mutex_comunicacao);
+              }
+              else{
+                sem_post(&s_cliente_fury325);
+              }
+        }
+        else{
+                printf("Cliente %d desistiu de andar no fury .\n", id);
+        }
 }
 
 
 void * takabisha (int socket){
-        while (simulador.aberto) {
-                int pessoas_para_entrar = 0;
-                while (pessoas_para_entrar < 2 ) {
-                        sem_wait(&s_takabisha);
-                        pessoas_para_entrar++;
-                }
-                pthread_mutex_lock(&mutex_takabisha);
+        while (simulador.divertimento_boolean) {
+                //int pessoas_para_entrar = 0;
+                printf("TAKABISHA preparado para andar.\n" );
+                //  while (pessoas_para_entrar < 2 ) {
+                sem_wait(&s_takabisha);
+                if(simulador.tempo_aberto > simulador.contador_time ) {
+                        //    pessoas_para_entrar++;
+                        //  }
+                        pthread_mutex_lock(&mutex_takabisha);
 
-                for (int i = 0; i < pessoas_para_entrar; i++) {
+                        //  printf("TAKABISHA fechou as portas \n")  for (int i = 0; i < pessoas_para_entrar; i++) {
                         if (num_prio_takabisha>= 1)
                         {
                                 num_prio_takabisha--;
@@ -101,15 +146,31 @@ void * takabisha (int socket){
                                 num_sem_prio_takabisha--;
                                 sem_post(&s_sem_prio_takabisha);
                         }
+                        //  }
                         pthread_mutex_unlock(&mutex_takabisha);
-                        printf("TAKABISHA SAIU \n");
-                        sleep(5); // tempo da volta da montanha
 
-                        for ( i = 0; i < pessoas_para_entrar; i++) {
-                                sem_post(&s_finish_takabisha);
-                        }
+                        sem_wait(&s_sai_takabisha);
+                      // tempo da volta da montanha
+                        printf("TAKABISHA SAIU \n");
+                        sleep(3);
+                        printf("TAKABISHA ACABOU\n");
+                        //for ( int i = 0; i < pessoas_para_entrar; i++) {
+                        sem_post(&s_finish_takabisha);
+                        sem_wait(&s_comunicacao_takabisha);
+                        //}
                 }
         }
+        printf("TAKABISHA fechou as portas \n");
+        for ( int i = 0; i < num_prio_takabisha; i++) {
+          sem_post(&s_prio_takabisha);
+          sem_post(&s_finish_takabisha);
+        }
+        for (int i = 0; i < num_sem_prio_takabisha; i++) {
+          sem_post(&s_sem_prio_takabisha);
+          sem_post(&s_finish_takabisha);
+        }
+
+
 }
 
 void *cliente_takabisha(int id){
@@ -125,25 +186,39 @@ void *cliente_takabisha(int id){
         if (cliente[id].prioridade == 1) {
                 pthread_mutex_unlock(&mutex_takabisha);
                 sem_wait(&s_prio_takabisha);
+                if(simulador.divertimento_boolean){
                 printf("Entrou cliente %d prioritario no carro \n", id );
+                sem_post(&s_sai_takabisha);
+                }
+
         }
         else{
                 pthread_mutex_unlock(&mutex_takabisha);
                 sem_wait(&s_sem_prio_takabisha);
+                if(simulador.divertimento_boolean){
                 printf("Entrou cliente %d nao prioritario no carro \n", id );
+                sem_post(&s_sai_takabisha);
+              }
         }
 
         sem_wait(&s_finish_takabisha);
+        printf("O cliente %d saiu do TAKABISHA\n", id);
+        sem_post(&s_comunicacao_takabisha);
 }
 
 
 void *escolhedivertimento(int id){
         switch (cliente[id].divertimento) {
-        case 0: cliente_takabisha(id);
+        case 0:
+                cliente[id].tempo_chegou_divertimento = simulador.contador_time;
+                cliente_takabisha(id);
                 //printf("cliente cheogu aqui crl\n" );
                 break;
 
-        case 1: cliente_fury(id);
+        case 1:
+                cliente[id].tempo_chegou_divertimento = simulador.contador_time;
+                cliente_fury(id);
+
                 break;
 
         default: printf("Erro na escolha do divertimento");
@@ -166,6 +241,8 @@ void *bilheteira()
                 pthread_mutex_unlock(&mutex_bilheteira);
                 sem_post(&s_cons_bilheteira);
         }
+
+
 }
 
 void bilhete(int id)
@@ -177,12 +254,12 @@ void bilhete(int id)
                 if (simulador.buff_bilheteira[consome_bilheteira] == 1)
                 {
                         cliente[id].prioridade = 1;
-                        printf("definiu prioridade1");
+                        //printf("definiu prioridade1");
                 }
                 else if(simulador.buff_bilheteira[consome_bilheteira]== 2)
                 {
                         cliente[id].prioridade = 0;
-                        printf("definiu prioridade0");
+                        //printf("definiu prioridade0");
                 }
                 simulador.buff_bilheteira[consome_bilheteira]= 0;
                 cliente[id].divertimento = rand()%2;
@@ -192,6 +269,9 @@ void bilhete(int id)
                 pthread_mutex_unlock(&mutex_bilheteira);
                 sem_post(&s_prod_bilheteira);
                 //printf ("MERDA PO CRL COM ISTO TUDO \n");
+        }
+        else{
+        printf("O Cliente %d saiu do parque, pois este fechou\n",id );
         }
 }
 void *vai_bilheteira(int id){
@@ -203,7 +283,12 @@ void *vai_bilheteira(int id){
         sleep(3);
         if (cliente[id].bilheteira < simulador.perc_cliente_bilhete) {
                 printf("O cliente n%d ta na bilheteira.\n",id);
+                if(simulador.divertimento_boolean){
                 bilhete(id);
+                }
+                else{
+                  printf("A bilheteira está fechada.\n");
+                }
         }
 
 }
@@ -213,6 +298,10 @@ void *trata_cliente(int id)
 
         time_t t;
         srand((unsigned) time(&t));
+        cliente[id].tempo_max_espera = rand()%20;
+        if(cliente[id].tempo_max_espera < 10) { // faz o tempo variar apenas entre 10 e 20
+                cliente[id].tempo_max_espera = cliente[id].tempo_max_espera +10;
+        }
         /*gettime( simulador.contador_time);
            char lineBilheteria [50];
            sprintf(lineBilheteria, "%d;2;a", id);*/
@@ -220,7 +309,7 @@ void *trata_cliente(int id)
 
         //write(newsockfd, lineBilheteria, strlen(lineBilheteria));
 
-        sem_wait(&s_tam_max_parque); // fazer post disto, ainda estou a pensar onde
+        sem_wait(&s_tam_max_parque);     // fazer post disto, ainda estou a pensar onde
 
         printf(" O Cliente nº%d entrou no parque.\n",id);
         //sem_wait(&s_tam_fila_bilheteira);// em principio não vamos precisar deste semaforo
@@ -246,6 +335,7 @@ void *trata_cliente(int id)
 
         //  sem_post(&s_tam_fila_bilheteira);
 
+        printf("O Cliente %d saiu do parque\n", id );
 
 }
 void *cria_cliente(int socket)
@@ -253,6 +343,9 @@ void *cria_cliente(int socket)
         newsockfd = socket;
         for (int i = 0; i < simulador.max_cliente; i++) {
                 usleep(150000);
+                usleep(150000);
+                usleep(150000);
+
                 conta_cliente++;
 
                 if((pthread_create(&(t_cliente[i]),NULL,(void *)trata_cliente, i))!=0)
@@ -266,6 +359,7 @@ void *cria_cliente(int socket)
                            printf("O Cliente nº%d chegou ao parque.\n",i);
                            write(newsockfd, lineCriacao, strlen(lineCriacao));*/
                 }
+
         }
 }
 void *cria_bilheteira(int socket)
@@ -288,20 +382,4 @@ void *cria_bilheteira(int socket)
                 usleep(150000 * (rand()%100));
 
         }
-}
-
-
-void montanha_russa(int socket)
-{
-        // newsockfd = socket;
-        //
-        // pthread_t thread;
-        // else
-        // {
-        //         char lineCreation[50];
-        //         sprintf(lineCreation, "%i;%i;%c", pthread_self(), 3, 'e');
-        //         printf("%s\n",  pthread_self());
-        //         write((int )newsockfd, lineCreation, strlen(lineCreation));
-        // }
-        // pthread_join (thread, NULL);
 }

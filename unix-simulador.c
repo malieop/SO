@@ -44,11 +44,15 @@ void main(void)
 								if (newsockfd < 0) err_dump("server: accept error");
 
 								simulador.perc_prioridade = 10;
-								simulador.max_cliente = 10;
+								simulador.max_cliente = 20;
 								simulador.contador_time = 0;
 								simulador.aberto = 1;
 								simulador.perc_cliente_bilhete= 100;
 								simulador.buff_bilheteira[4];
+								simulador.hora_de_abertura= 8;
+								simulador.hora_de_fecho = 9;
+								simulador.divertimento_boolean = 1;
+
 
 								//sem_init(&s_tam_fila_bilheteira,0, 10);
 								sem_init(&s_tam_max_parque,0, simulador.max_cliente);
@@ -60,23 +64,41 @@ void main(void)
 								sem_init(&s_fury325,0, 0);
 								sem_init(&s_cliente_fury325,0,0);
 								sem_init(&s_finish_fury,0,0);
+								sem_init(&s_comunicacaofury325,0,0);
+								sem_init(&s_sai_takabisha,0,0);
 
 
 								pthread_mutex_init(&mutex_fury,NULL);
 								pthread_mutex_init(&mutex_takabisha,NULL);
 								pthread_mutex_init(&mutex_bilheteira,NULL);
+								pthread_mutex_init(&mutex_comunicacao,NULL);
 								produz_bilheteira = 0;
 								consome_bilheteira = 0;
 
-
+								tempo_aberto_parque();
 								timersimulador();
+								if((pthread_create(&(t_cria_booleano_divertimento),NULL,(void *)divertimento,NULL))!=0){
+										err_dump("pthread_create: erro criação thread");
+								}
+								else{
+
+																printf("criou booleano dos divertimentos\n");
+								}
+								if((pthread_create(&(t_cria_fury),NULL,(void *)fury325, NULL))!=0){
+
+											err_dump("pthread_create: erro criação thread");
+								}
+								else{
+
+																printf("criou fury325\n");
+								}
 								if((pthread_create(&(t_cria_takabisha),NULL,(void *)takabisha, NULL))!=0){
 
 											err_dump("pthread_create: erro criação thread");
 								}
 								else{
 
-																printf("criou takabisha");
+																printf("criou takabisha\n");
 								}
 								if((pthread_create(&(t_cria_cliente),NULL,(void *)cria_cliente, NULL))!=0)
 								{
@@ -91,22 +113,39 @@ void main(void)
 																err_dump("pthread_create: erro criação thread");
 								}
 								else{
-																printf("criou bilheiteira");
+
 								}
-								pthread_join(t_cria_cliente, NULL);
+
+								/*usleep(150000);
+								usleep(150000);
+								usleep(150000);
+								usleep(150000);
+								usleep(150000);*/
+								printf("apasssss %d", conta_cliente);
 
 
-								//montanha_russa(newsockfd);
-								for (int i = 0; i < conta_cliente; i++) {
+								for (int i = 0; i < simulador.max_cliente; i++) {
 
 																pthread_join(t_cliente[i], NULL);
+																usleep(150000);
+																//printf("VACAS DE MERDA");
 								}
-								for(int j = 0; j < num_bilheteiras; j++)
+								pthread_join(t_cria_cliente, NULL);
+								usleep(1500000);
+
+								simulador.aberto = 0 ;
+								printf("PUTA CHEGUEI AQUI\n");
+								pthread_join(t_cria_takabisha, NULL);
+								printf("CRL O TAKABISHA NAO ACABOU\n");
+								pthread_join(t_cria_fury, NULL);
+
+								/*for(int j = 0; j < num_bilheteiras; j++)
 								{
 																pthread_join(t_bilheteira[j], NULL);
-								}
+								}*/
+								printf("O PARQUE FECHOU !!\n");
 
-								pthread_join(t_cria_bilheteira, NULL);
+
 
 								close(sockfd); //cuidado com isto senão não deixa acabar as threads
 
