@@ -6,6 +6,7 @@
 #include <sys/un.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include <math.h>
 
 #define UNIXSTR_PATH "/tmp/s.unixstr"
 #define UNIXDG_PATH  "/tmp/s.unixdgx"
@@ -18,9 +19,9 @@
 struct estatisticas
 {
         int total_parque;
+        int total_bilhetes_vendidos;
         int total_montanha1;
         int total_montanha2;
-        int total_montanha3;
         int tempo_desistencias;
         int total_desistencias;
 };
