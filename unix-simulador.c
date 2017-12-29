@@ -100,7 +100,7 @@ void main(void)
 
 																printf("criou takabisha\n");
 								}
-								if((pthread_create(&(t_cria_cliente),NULL,(void *)cria_cliente, NULL))!=0)
+								if((pthread_create(&(t_cria_cliente),NULL,(void *)cria_cliente,newsockfd))!=0)
 								{
 																err_dump("pthread_create: erro criação thread");
 								}

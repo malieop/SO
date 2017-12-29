@@ -354,10 +354,10 @@ void *cria_cliente(int socket)
                 }
                 else{
 
-                        /*  char lineCriacao [50];
+                           char lineCriacao [50];
                            sprintf(lineCriacao, "%d;1;a", i);
                            printf("O Cliente nº%d chegou ao parque.\n",i);
-                           write(newsockfd, lineCriacao, strlen(lineCriacao));*/
+                           write(newsockfd, lineCriacao, strlen(lineCriacao));
                 }
 
         }

@@ -116,8 +116,13 @@ void ecra(int sockfd)
         int n;
         int nArray = 0;
         char sendline[MAXLINE];
+        printCab();
+        printStats(stats);
+        printReg(registoDeAtividade);
+        printRod();
 
         for(;;) {
+
         if((n = read(sockfd, line, MAXLINE-1)) > 0)
         {
                 //é preciso porque partimos a string duas vezes, e não podemos fazer no mesmo apontador
@@ -143,16 +148,19 @@ void ecra(int sockfd)
                 }
 
                 bzero(line,MAXLINE);
-
                 printCab();
                 printStats(stats);
                 printReg(registoDeAtividade);
                 printRod();
 
-                int i;
+
+
+
         }
 
         else if(n<0) printf("ERRO LENDO DA SOCKFD");
-        }
+
+
+}
 
 }
