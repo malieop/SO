@@ -43,14 +43,14 @@ void main(void)
 
 								if (newsockfd < 0) err_dump("server: accept error");
 
-								simulador.perc_prioridade = 10;
-								simulador.max_cliente = 20;
+								simulador.perc_prioridade = 12;
+								simulador.max_cliente = 72;
 								simulador.contador_time = 0;
 								simulador.aberto = 1;
-								simulador.perc_cliente_bilhete= 100;
+								simulador.perc_cliente_bilhete= 84;
 								simulador.buff_bilheteira[4];
 								simulador.hora_de_abertura= 8;
-								simulador.hora_de_fecho = 9;
+								simulador.hora_de_fecho = 10;
 								simulador.divertimento_boolean = 1;
 
 
@@ -122,13 +122,15 @@ void main(void)
 								usleep(150000);
 								usleep(150000);*/
 								printf("apasssss %d", conta_cliente);
-
+								int j= 0;
+								while(conta_cliente < simulador.max_cliente);
 
 								for (int i = 0; i < simulador.max_cliente; i++) {
 
 																pthread_join(t_cliente[i], NULL);
 																usleep(150000);
-																//printf("VACAS DE MERDA");
+																j++;
+																printf("%d",j);
 								}
 								pthread_join(t_cria_cliente, NULL);
 								usleep(1500000);
@@ -137,12 +139,14 @@ void main(void)
 								printf("PUTA CHEGUEI AQUI\n");
 								pthread_join(t_cria_takabisha, NULL);
 								printf("CRL O TAKABISHA NAO ACABOU\n");
-								pthread_join(t_cria_fury, NULL);
+								//pthread_join(t_cria_fury, NULL);
 
 								/*for(int j = 0; j < num_bilheteiras; j++)
 								{
 																pthread_join(t_bilheteira[j], NULL);
 								}*/
+								printf("FURY325 fechou as portas.\n" );
+								printf("TAKABISHA fechou as portas \n");
 								printf("O PARQUE FECHOU !!\n");
 
 

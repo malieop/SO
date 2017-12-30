@@ -81,7 +81,7 @@ struct cliente_struct
 
 
 };
-// semaforosno diggity
+// semaforos
 sem_t s_tam_fila_bilheteira;
 sem_t s_tam_max_parque;
 sem_t s_prod_bilheteira;
@@ -96,6 +96,8 @@ sem_t s_fury325;
 sem_t s_comunicacaofury325;
 sem_t s_comunicacao_takabisha;
 sem_t s_sai_takabisha;
+sem_t s_cliente_tempo;
+sem_t s_cliente_verificado;
 
 
 
