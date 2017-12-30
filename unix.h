@@ -15,16 +15,7 @@
 //constantes
 
 #define num_bilheteiras 4
-
-struct estatisticas
-{
-        int total_parque;
-        int total_bilhetes_vendidos;
-        int total_montanha1;
-        int total_montanha2;
-        int tempo_desistencias;
-        int total_desistencias;
-};
+#define SIZEARRAY 17
 
 //---Prototypes--//
 //---util.c
@@ -32,15 +23,32 @@ void err_dump(char *msg);
 int readn(int fd, char *ptr, int nbytes);
 int writen(int fd, char *ptr, int nbytes);
 int readline(int fd, char *ptr, int maxlen);
-void ecra(int sockfd);
 char * protocologoComunicacao(char * codigo, char * separador);
 struct estatisticas atualizaDadosEstatisticas(char * codigo, char * separador, struct estatisticas stats);
-void *cria_cliente(int socket);
-void *cria_bilheteira(int socket);
-void * takabisha (int socket);
+//--simulador.c
+void tempo_aberto_parque();
+void * virtualtime();
+char * gettime();
+void timersimulador();
+void * divertimento();
 void * fury325(int socket);
-void *divertimento();
-
+void * cliente_fury(int id);
+void * takabisha (int socket);
+void * cliente_takabisha(int id);
+void * escolhedivertimento(int id);
+void * bilheteira();
+void bilhete(int id);
+void * vai_bilheteira(int id);
+void * trata_cliente(int id);
+void * cria_cliente(int socket);
+void * cria_bilheteira(int socket);
+//--monitor.c
+int acertaStatsN(int stat);
+void printCab();
+void printStats(struct estatisticas stats);
+void printReg(char registoDeAtividade[SIZEARRAY][90]);
+void printRod();
+void ecra(int sockfd);
 
 //variaveis globais
 int conta_cliente;
@@ -50,7 +58,9 @@ int consome_bilheteira;  // variaveis para o produtores consumidores da bilhetei
 int num_prio_takabisha;
 int num_sem_prio_takabisha;
 int num_pessoas_fury325;
-//
+char lineCriacao [90];
+
+//--Estruturas
 struct parque
 {
 
@@ -81,6 +91,16 @@ struct cliente_struct
 
 
 };
+struct estatisticas
+{
+        int total_parque;
+        int total_bilhetes_vendidos;
+        int total_montanha1;
+        int total_montanha2;
+        int tempo_desistencias;
+        int total_desistencias;
+};
+
 // semaforosno diggity
 sem_t s_tam_fila_bilheteira;
 sem_t s_tam_max_parque;

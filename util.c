@@ -81,19 +81,21 @@ void err_dump(char *msg)
 
 char * protocologoComunicacao(char * codigo, char * separador)
 {
-        int *idCliente = strtok(codigo, separador);
+        char * hora = strtok(codigo, separador);
+
+        char * idCliente = strtok(NULL, separador);
 
         char * acao;
         switch (strtol(strtok(NULL, separador),NULL,0)) { //strtol - converte char para inteiro
         case 1: acao = "chegou";
                 break;
-        case 2: acao = "entrar";
+        case 2: acao = "entrou";
                 break;
         case 3: acao = "esta na fila para comprar";
                 break;
         case 4: acao = "esta na fila para entrar";
              break;
-        case 5: acao = "já não se encontra";
+        case 5: acao = "ja nao se encontra";
                 break;
         case 6: acao = "desistiu de entrar";
                 break;
@@ -108,27 +110,29 @@ char * protocologoComunicacao(char * codigo, char * separador)
                 break;
         case 'c': lugar = "na bilhetaria";
                 break;
-        case 'd': lugar = "na montanha russa Takabisha";
+        case 'd': lugar = "na montanha Takabisha";
                 break;
-        case 'e': lugar = "na montanha russa Fury 325";
+        case 'e': lugar = "na montanha Fury 325";
                 break;
         default: lugar = "ERRO!";
         }
 
         char * fraseCompleta = (char *) malloc(sizeof(char) * 3); //Não sei bem, mas a internet disse e funciona!
 
-        sprintf(fraseCompleta, "   │%s • O cliente %s %s %s.", "10h00", idCliente, acao, lugar); //cooloca informação pretinente
+        sprintf(fraseCompleta, "   │%s • O cliente %s %s %s. ", hora, idCliente, acao, lugar); //cooloca informação pretinente
 
         int aux = strlen(fraseCompleta);
-        aux = 79 - aux;
-        sprintf(fraseCompleta, "%s %*s │", fraseCompleta, aux, " "); //adiciona os espaços vazios para enquadrar no ecrã
+        aux = 80 - aux;
+
+        sprintf(fraseCompleta, "%s %*s│", fraseCompleta, aux, " "); //adiciona os espaços vazios para enquadrar no ecrã
 
         return fraseCompleta;
 }
 
-struct estatisticas atualizaDadosEstatisticas(char * codigo, char * separador, struct estatisticas stats)
+struct estatisticas  atualizaDadosEstatisticas(char * codigo, char * separador, struct estatisticas stats)
 {
-        strtok(codigo, separador); //id do cliente, não é necessário
+        strtok(codigo, separador); //hora, não é necessário
+        strtok(NULL, separador);//id do cliente, não é necessário
 
         switch (strtol(strtok(NULL, separador),NULL,0)) {  //strtol - converte char para inteiro
         case 1:          //entrou
