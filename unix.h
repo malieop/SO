@@ -40,6 +40,7 @@ void *cria_bilheteira(int socket);
 void * takabisha (int socket);
 void * fury325(int socket);
 void *divertimento();
+void * virtualtime();
 
 
 //variaveis globais
@@ -50,6 +51,7 @@ int consome_bilheteira;  // variaveis para o produtores consumidores da bilhetei
 int num_prio_takabisha;
 int num_sem_prio_takabisha;
 int num_pessoas_fury325;
+int verifica_cliente_takabisha;
 //
 struct parque
 {
@@ -104,7 +106,7 @@ sem_t s_cliente_verificado;
 struct cliente_struct cliente[50000];
 struct parque simulador;
 pthread_t static t_cliente [50000];
-
+pthread_t thread;
 pthread_t t_bilheteira[1000];
 pthread_t t_cria_cliente;
 pthread_t t_cria_bilheteira;

@@ -47,10 +47,10 @@ void main(void)
 								simulador.max_cliente = 72;
 								simulador.contador_time = 0;
 								simulador.aberto = 1;
-								simulador.perc_cliente_bilhete= 84;
+								simulador.perc_cliente_bilhete= 100;
 								simulador.buff_bilheteira[4];
 								simulador.hora_de_abertura= 8;
-								simulador.hora_de_fecho = 10;
+								simulador.hora_de_fecho = 14;
 								simulador.divertimento_boolean = 1;
 
 
@@ -66,6 +66,7 @@ void main(void)
 								sem_init(&s_finish_fury,0,0);
 								sem_init(&s_comunicacaofury325,0,0);
 								sem_init(&s_sai_takabisha,0,0);
+								sem_init(&s_cliente_verificado,0,0);
 
 
 								pthread_mutex_init(&mutex_fury,NULL);
@@ -73,10 +74,17 @@ void main(void)
 								pthread_mutex_init(&mutex_bilheteira,NULL);
 								pthread_mutex_init(&mutex_comunicacao,NULL);
 								produz_bilheteira = 0;
+								verifica_cliente_takabisha = 0;
 								consome_bilheteira = 0;
 
 								tempo_aberto_parque();
-								timersimulador();
+
+								if((pthread_create(&(thread),NULL,(void *)virtualtime, NULL))!=0)
+				        {
+				                err_dump("pthread_create: erro criação thread");
+				        }
+				        else printf("criou timer\n" );
+
 								if((pthread_create(&(t_cria_booleano_divertimento),NULL,(void *)divertimento,NULL))!=0){
 										err_dump("pthread_create: erro criação thread");
 								}
@@ -133,11 +141,12 @@ void main(void)
 																printf("%d",j);
 								}
 								pthread_join(t_cria_cliente, NULL);
+								
 								usleep(1500000);
 
 								simulador.aberto = 0 ;
 								printf("PUTA CHEGUEI AQUI\n");
-								pthread_join(t_cria_takabisha, NULL);
+								//pthread_join(t_cria_takabisha, NULL);
 								printf("CRL O TAKABISHA NAO ACABOU\n");
 								//pthread_join(t_cria_fury, NULL);
 
