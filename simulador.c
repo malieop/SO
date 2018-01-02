@@ -493,7 +493,6 @@ void *trata_cliente(int id)
         while(strcmp(line, "q") != 0)
         {
                 read(newsockfd, line, MAXLINE);
-                printf("%s\n", line);
         }
         strcpy(line, " ");
         usleep(150000);
