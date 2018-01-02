@@ -286,10 +286,6 @@ void ecra(int sockfd)
                                 char * auxLine = (char *) malloc(sizeof(char) * 3); //aloca memoria para auxLine
                                 strcpy(auxLine, line); // copia a line para a auxLine
 
-
-                                printf("%s\n", auxLine);
-                                printf("%s\n", line);
-
                                 atualizaDadosEstatisticas(line, ";");
                                 //atualizaDadosEstatisticas(line, ";"); //atualiza a estrutura consoante a mensagem recebida
 
