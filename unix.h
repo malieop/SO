@@ -23,8 +23,6 @@ void err_dump(char *msg);
 int readn(int fd, char *ptr, int nbytes);
 int writen(int fd, char *ptr, int nbytes);
 int readline(int fd, char *ptr, int maxlen);
-char * protocologoComunicacao(char * codigo, char * separador);
-struct estatisticas atualizaDadosEstatisticas(char * codigo, char * separador, struct estatisticas stats);
 //--simulador.c
 void tempo_aberto_parque();
 void * virtualtime();
@@ -43,9 +41,11 @@ void * trata_cliente(int id);
 void * cria_cliente(int socket);
 void * cria_bilheteira(int socket);
 //--monitor.c
+char * protocologoComunicacao(char * codigo, char * separador);
+void atualizaDadosEstatisticas(char * codigo, char * separador);
 int acertaStatsN(int stat);
 void printCab();
-void printStats(struct estatisticas stats);
+void printStats();
 void printReg(char registoDeAtividade[SIZEARRAY][90]);
 void printRod();
 void ecra(int sockfd);
@@ -59,6 +59,7 @@ int num_prio_takabisha;
 int num_sem_prio_takabisha;
 int num_pessoas_fury325;
 char lineCriacao [90];
+char line[512];
 
 //--Estruturas
 struct parque

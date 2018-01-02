@@ -46,12 +46,11 @@ void main(void)
         if (newsockfd < 0) err_dump("server: accept error");
 
         //só começa quando receber a instrução do monitor
-        char line[MAXLINE];
+
         while(strcmp(line, "c") != 0)
         {
                 read(newsockfd, line, MAXLINE);
         }
-
         //configurações do simulador
         simulador.perc_prioridade = 10;
         simulador.max_cliente = 20;
@@ -96,7 +95,7 @@ void main(void)
         {
 
                 //printf("criou booleano dos divertimentos\n");
-                printf("   │%s ★ A realizar espionagem aos clientes *wink wink*.\n", gettime());
+                printf(" │%s ★ A realizar espionagem aos clientes *wink wink*.\n", gettime());
         }
         if((pthread_create(&(t_cria_fury),NULL,(void *)fury325, NULL))!=0) {
 
@@ -106,7 +105,7 @@ void main(void)
         {
 
                 //printf("criou fury325\n");
-                printf("   │%s ★ À ligar a montanha russa Fury 325.\n", gettime());
+                printf(" │%s ★ À ligar a montanha russa Fury 325.\n", gettime());
         }
         if((pthread_create(&(t_cria_takabisha),NULL,(void *)takabisha, NULL))!=0) {
 
@@ -116,7 +115,7 @@ void main(void)
         {
 
                 //printf("criou takabisha\n");
-                printf("   │%s ★ À ligar a montanha russa Takabisha.\n", gettime());
+                printf(" │%s ★ À ligar a montanha russa Takabisha.\n", gettime());
         }
         if((pthread_create(&(t_cria_cliente),NULL,(void *)cria_cliente,newsockfd))!=0)
         {
@@ -126,7 +125,7 @@ void main(void)
         {
 
                 //printf("%d", conta_cliente);
-                printf("   │%s ★ Clientes começam a aproximar-se do recinto do parque.\n", gettime());
+                printf(" │%s ★ Clientes começam a aproximar-se do recinto do parque.\n", gettime());
         }
         if((pthread_create(&(t_cria_bilheteira),NULL,(void *)cria_bilheteira, NULL))!=0)
         {
@@ -134,7 +133,7 @@ void main(void)
         }
         else
         {
-                printf("   │%s ★ À acender as luzes da bilhteira.\n", gettime());
+                printf(" │%s ★ À acender as luzes da bilhteira.\n", gettime());
         }
 
         //printf("apasssss %d", conta_cliente);
@@ -159,7 +158,7 @@ void main(void)
         pthread_join(t_cria_fury, NULL);
 
 
-        printf("   │%s ★ A DisneyLand Madeira fechou!!\n", gettime());
+        printf(" │%s ★ A DisneyLand Madeira fechou!!\n", gettime());
 
         printf("%s\n", "ACABOUUUUUUU");
         close(sockfd);                                                         //cuidado com isto senão não deixa acabar as threads
