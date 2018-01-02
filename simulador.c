@@ -4,28 +4,27 @@
 
 int newsockfd;
 
-void * threadRoutine(newsockfd)
+void tempo_aberto_parque()
 {
-        char lineToWrite[50];
-        sprintf(lineToWrite, "Olá, sou o cliente %i", pthread_self());
-        printf("%s\n",lineToWrite);
-}
-void tempo_aberto_parque(){
 
         simulador.tempo_aberto = (simulador.hora_de_fecho-simulador.hora_de_abertura) *60;
-        printf("%d", simulador.tempo_aberto);
+        //printf("%d", simulador.tempo_aberto);
+        printf(" │    ★ O parque estará aberto durante %d mins.\n", simulador.tempo_aberto);
 }
+
 void * virtualtime() // função que incrementa variavel do tempo virtual
 {
         while (simulador.aberto) {
                 //gettime(auxtime);
                 usleep(150000);
                 simulador.contador_time++;
-                gettime();
+                //gettime();
 
         }
 }
-void gettime( ) { // funçao para obter o tempo virtual
+
+char * gettime()
+{ // funçao para obter o tempo virtual
 
         int horas = simulador.hora_de_abertura;
         int min;
@@ -33,7 +32,12 @@ void gettime( ) { // funçao para obter o tempo virtual
         horas = horas + simulador.contador_time/60;
         min = simulador.contador_time % 60;
 
-        printf ("São %dh%dmin\n",horas, min);
+        if(horas >= 24) horas = 0;
+
+        //printf ("São %dh%dmin\n",horas, min);
+        char * horasAtual = (char *) malloc(sizeof(char) * 3);
+        sprintf(horasAtual, "%dh%d", horas, min);
+        return horasAtual;
 }
 void *divertimento(){
         while(simulador.aberto) {
@@ -43,9 +47,11 @@ void *divertimento(){
         }
 }
 
-void *fury325(int socket){
+void *fury325(int socket)
+{
         while(simulador.divertimento_boolean) {
-                printf("FURY 325 está pronto a receber clientes\n");
+                //printf("FURY 325 está pronto a receber clientes\n");
+                printf(" │%s ★ Montanha russa Fury 325 pronta para receber clientes.\n", gettime());
                 int pessoas_fury = 0;
                 int pessoas_verificadas = 0;
                 while (pessoas_fury < 4) {
@@ -72,9 +78,11 @@ void *fury325(int socket){
 
 
                         //sleep (1);
-                        printf("FURY 325 saiu\n");
+                        //printf("FURY 325 saiu\n");
+                        printf(" │%s ★ Montanha russa Fury 325 começou uma viagem.\n", gettime());
                         sleep(4); // tempo da volta da montanhavoid * fury325(int socket)
-                        printf("FURY 325 ACABOU \n");
+                        //printf("FURY 325 ACABOU \n");
+                        printf(" │%s ★ Montanha russa Fury 325 terminou uma viagem.\n", gettime());
                         for ( int i = 0; i < pessoas_fury; i++) {
                                 sem_post(&s_finish_fury); // assinala que acabou a volta
                                 //sem_wait(&s_comunicacaofury325);
@@ -94,9 +102,19 @@ void *fury325(int socket){
 
 }
 
-
-
-void *cliente_fury(int id){
+void *cliente_fury(int id)
+{
+        pthread_mutex_lock(&mutex_comunicacao);
+        sprintf(lineCriacao, "%s;%d;4;e", gettime(),id);
+        printf(" │%s • O cliente %d esta na fila para entrar na montanha russa Fury 325.\n", gettime(), id);
+        write(newsockfd, lineCriacao, strlen(lineCriacao));
+        while(strcmp(line, "q") != 0)
+        {
+                read(newsockfd, line, MAXLINE);
+        }
+        strcpy(line, " ");
+        usleep(150000);
+        pthread_mutex_unlock(&mutex_comunicacao);
 
         pthread_mutex_lock(&mutex_fury);
         num_pessoas_fury325++;
@@ -112,8 +130,15 @@ void *cliente_fury(int id){
                 sem_post(&s_cliente_verificado);
                 sem_wait(&s_finish_fury); // retira os clientes do fury
                 pthread_mutex_lock(&mutex_comunicacao);
-                //sem_post(&s_comunicacaofury325);
-                printf("O Cliente n%d saiu do FURY 325\n", id);
+                sprintf(lineCriacao, "%s;%d;6;e", gettime(),id);
+                printf(" │%s • O cliente %d desistiu de entrar na montanha russa Fury 325.\n", gettime(), id);
+                write(newsockfd, lineCriacao, strlen(lineCriacao));
+                while(strcmp(line, "q") != 0)
+                {
+                        read(newsockfd, line, MAXLINE);
+                }
+                strcpy(line, " ");
+                usleep(150000);
                 pthread_mutex_unlock(&mutex_comunicacao);
 
 
@@ -125,14 +150,17 @@ void *cliente_fury(int id){
         }
 }
 
-
-void * takabisha (int socket){
-        while (simulador.divertimento_boolean) {
+void * takabisha (int socket)
+{
+        while (simulador.divertimento_boolean)
+        {
                 //int pessoas_para_entrar = 0;
-                printf("TAKABISHA preparado para andar.\n" );
+                //printf("TAKABISHA preparado para andar.\n" );
+                printf(" │%s ★ Montanha russa Takabisha pronta para receber clientes.\n", gettime());
                 //  while (pessoas_para_entrar < 2 ) {
                 sem_wait(&s_takabisha);
-                if(simulador.tempo_aberto > simulador.contador_time ) {
+                if(simulador.tempo_aberto > simulador.contador_time )
+                {
                         //    pessoas_para_entrar++;
                         //  }
                         pthread_mutex_lock(&mutex_takabisha);
@@ -180,12 +208,27 @@ void * takabisha (int socket){
 
 }
 
-void *cliente_takabisha(int id){
+void *cliente_takabisha(int id)
+{
+        pthread_mutex_lock(&mutex_comunicacao);
+        sprintf(lineCriacao, "%s;%d;4;d", gettime(),id);
+        printf(" │%s • O cliente %d esta na fila para entrar na montanha russa Takabisha.\n", gettime(), id);
+        write(newsockfd, lineCriacao, strlen(lineCriacao));
+        while(strcmp(line, "q") != 0)
+        {
+                read(newsockfd, line, MAXLINE);
+        }
+        strcpy(line, " ");
+        usleep(150000);
+        pthread_mutex_unlock(&mutex_comunicacao);
+
         pthread_mutex_lock(&mutex_takabisha);
-        if (cliente[id].prioridade == 1) {
+        if (cliente[id].prioridade == 1)
+        {
                 num_prio_takabisha++;
         }
-        else{
+        else
+        {
                 num_sem_prio_takabisha++;
         }
         sem_post(&s_takabisha);
@@ -237,9 +280,10 @@ void *cliente_takabisha(int id){
         sem_post(&s_comunicacao_takabisha);
 }
 
-
-void *escolhedivertimento(int id){
-        switch (cliente[id].divertimento) {
+void *escolhedivertimento(int id)
+{
+        switch (cliente[id].divertimento)
+        {
         case 0:
                 cliente[id].tempo_chegou_divertimento = simulador.contador_time;
                 cliente_takabisha(id);
@@ -256,16 +300,20 @@ void *escolhedivertimento(int id){
         }
 }
 
-
 void *bilheteira()
 {
-        while(simulador.aberto) {
+        while(simulador.aberto)
+        {
                 sem_wait(&s_prod_bilheteira);
                 pthread_mutex_lock(&mutex_bilheteira);
                 if((rand()%100)< simulador.perc_prioridade) // define se o cliente é prioritário ou não
-                {simulador.buff_bilheteira[produz_bilheteira] = 1; }
+                {
+                        simulador.buff_bilheteira[produz_bilheteira] = 1;
+                }
                 else
-                {simulador.buff_bilheteira[produz_bilheteira] = 2; }
+                {
+                        simulador.buff_bilheteira[produz_bilheteira] = 2;
+                }
                 //printf("%d\n",simulador.buff_bilheteira[produz_bilheteira] );
                 //printf("%d\n", produz_bilheteira);
                 produz_bilheteira = ( produz_bilheteira + 1 )% 4;
@@ -281,8 +329,21 @@ void bilhete(int id)
         //printf("COMPROU BILHETE ESTE FDP");
         if(simulador.aberto) {
 
+                pthread_mutex_lock(&mutex_comunicacao);
+                sprintf(lineCriacao, "%s;%d;3;c", gettime(),id);
+                printf(" │%s • O cliente %d esta na fila para comprar na bilhetaria.\n", gettime(), id);
+                write(newsockfd, lineCriacao, strlen(lineCriacao));
+                while(strcmp(line, "q") != 0)
+                {
+                        read(newsockfd, line, MAXLINE);
+                }
+                strcpy(line, " ");
+                usleep(150000);
+                pthread_mutex_unlock(&mutex_comunicacao);
+
                 sem_wait(&s_cons_bilheteira);
                 pthread_mutex_lock(&mutex_bilheteira);
+
                 if (simulador.buff_bilheteira[consome_bilheteira] == 1)
                 {
                         cliente[id].prioridade = 1;
@@ -295,32 +356,55 @@ void bilhete(int id)
                         //printf("definiu prioridade0");
                 }
                 simulador.buff_bilheteira[consome_bilheteira]= 0;
-                cliente[id].divertimento = 0; //rand()%2;
-                printf("O cliente n%d tem o valor de prioridade %d e o divertimento é %d\n",id, cliente[id].prioridade,cliente[id].divertimento);
+
+                cliente[id].divertimento = rand()%2;
+
+                //printf("O cliente n%d tem o valor de prioridade %d e o divertimento é %d\n",id, cliente[id].prioridade,cliente[id].divertimento);
+                printf(" │%s • O cliente %d esta na fila para comprar na bilhetaria.\n", gettime(), id);
+                if(cliente[id].prioridade == 1) printf(" │%s • O cliente %d comprou bilhete superQuick para andar na montanha ", gettime(), id);
+                else printf(" │%s • O cliente %d comprou bilhete para andar na montanha ", gettime(), id);
+
+                if(cliente[id].divertimento == 0) printf("Takabisha.\n" );
+                else printf("Fury 325.\n");
 
                 consome_bilheteira = (consome_bilheteira + 1)% 4;
                 pthread_mutex_unlock(&mutex_bilheteira);
                 sem_post(&s_prod_bilheteira);
-                //printf ("MERDA PO CRL COM ISTO TUDO \n");
+
+                pthread_mutex_lock(&mutex_comunicacao);
+                sprintf(lineCriacao, "%s;%d;5;c", gettime(),id);
+                printf(" │%s • O cliente %d já não se encontra na bilhetaria.\n", gettime(), id);
+                write(newsockfd, lineCriacao, strlen(lineCriacao));
+                while(strcmp(line, "q") != 0)
+                {
+                        read(newsockfd, line, MAXLINE);
+                }
+                strcpy(line, " ");
+                usleep(150000);
+                pthread_mutex_unlock(&mutex_comunicacao);
         }
         else{
-                printf("O Cliente %d saiu do parque, pois este fechou\n",id );
+                printf(" │%s • O Cliente %d foi forçado a sair do parque, porque vai fechar.\n",gettime(),id );
         }
 }
-void vai_bilheteira(int id){
+
+void *vai_bilheteira(int id)
+{
         cliente[id].bilheteira = rand()%100;
         /*while (cliente[id].bilheteira > simulador.perc_cliente_bilhete) { // ciclo para fazer os cliente perder tempo para irem para a bilhetaria !
                 cliente[id].bilheteira = rand()%100;
                 printf("O cliente n%d está a espera.\n", id);
            }*/
         sleep(3);
-        if (cliente[id].bilheteira < simulador.perc_cliente_bilhete) {
-                printf("O cliente n%d ta na bilheteira.\n",id);
-                if(simulador.divertimento_boolean) {
+        if (cliente[id].bilheteira < simulador.perc_cliente_bilhete)
+        {
+                //printf("O cliente n%d ta na bilheteira.\n",id);
+                if(simulador.divertimento_boolean)
+                {
                         bilhete(id);
                 }
                 else{
-                        printf("A bilheteira está fechada.\n");
+                        printf(" │%s ★ A bilheteira está fechada.\n", gettime());
                 }
         }
         else{
@@ -348,7 +432,19 @@ void *trata_cliente(int id)
 
         sem_wait(&s_tam_max_parque);     // fazer post disto, ainda estou a pensar onde
 
-        printf(" O Cliente nº%d entrou no parque.\n",id);
+
+        pthread_mutex_lock(&mutex_comunicacao);
+        sprintf(lineCriacao, "%s;%d;2;b", gettime(),id);
+        printf(" │%s • O cliente %d entrou no recinto do parque.\n", gettime(), id);
+        write(newsockfd, lineCriacao, strlen(lineCriacao));
+        while(strcmp(line, "q") != 0)
+        {
+                read(newsockfd, line, MAXLINE);
+        }
+        strcpy(line, " ");
+        usleep(150000);
+        pthread_mutex_unlock(&mutex_comunicacao);
+
         //sem_wait(&s_tam_fila_bilheteira);// em principio não vamos precisar deste semaforo
         vai_bilheteira(id);
         if(cliente[id].divertimento == 2) {
@@ -377,13 +473,29 @@ void *trata_cliente(int id)
 
         //  sem_post(&s_tam_fila_bilheteira);
 
-        printf("O Cliente %d saiu do parque\n", id );
+        pthread_mutex_lock(&mutex_comunicacao);
+        sprintf(lineCriacao, "%s;%d;5;b", gettime(),id);
+        printf(" │%s • O Cliente %d saiu do parque.\n", gettime(), id );
+        //printf("%s\n", "CLiente saiu");
+        write(newsockfd, lineCriacao, strlen(lineCriacao));
+        while(strcmp(line, "q") != 0)
+        {
+                read(newsockfd, line, MAXLINE);
+                printf("%s\n", line);
+        }
+        strcpy(line, " ");
+        usleep(150000);
+        pthread_mutex_unlock(&mutex_comunicacao);
         sem_post(&s_tam_max_parque);
 
+        pthread_exit(NULL);
+
 }
+
 void *cria_cliente(int socket)
 {
         newsockfd = socket;
+
         for (int i = 0; i < simulador.max_cliente; i++) {
                 usleep(150000);
                 usleep(150000);
@@ -397,14 +509,22 @@ void *cria_cliente(int socket)
                 }
                 else{
                         conta_cliente++;
-                        char lineCriacao [50];
-                        sprintf(lineCriacao, "%d;1;a", i);
-                        printf("O Cliente nº%d chegou ao parque.\n",i);
+                        pthread_mutex_lock(&mutex_comunicacao);
+                        sprintf(lineCriacao, "%s;%d;1;a", gettime(),i);
+                        printf(" │%s • O cliente %d chegou ao recinto do parque.\n", gettime(), i);
                         write(newsockfd, lineCriacao, strlen(lineCriacao));
+                        while(strcmp(line, "q") != 0)
+                        {
+                                read(newsockfd, line, MAXLINE);
+                        }
+                        strcpy(line, " ");
+                        usleep(150000);
+                        pthread_mutex_unlock(&mutex_comunicacao);
                 }
 
         }
 }
+
 void *cria_bilheteira(int socket)
 {
         int i = 0;
@@ -420,7 +540,7 @@ void *cria_bilheteira(int socket)
                 {
                         i++;
                         conta_bilheteira++;
-                        printf("criou bilheteira");
+                        printf(" │%s ★ As  bilheteiras já abriram.\n", gettime());
                 }
                 usleep(150000 * (rand()%100));
 
