@@ -1,0 +1,9 @@
+perc_prioridade : 50
+max_cliente : 50
+clientes_criados : 100
+contador_time : 0
+aberto : 1
+perc_cliente_bilhete : 90
+hora_de_abertura : 9
+hora_de_fecho : 13
+divertimento_boolean : 1
