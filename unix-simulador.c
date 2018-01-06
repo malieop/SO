@@ -49,18 +49,9 @@ void main(void)
         {
                 read(newsockfd, line, MAXLINE);
         }
-        //configurações do simulador
-        simulador.perc_prioridade = 10;
-        simulador.max_cliente = 20;
-        simulador.contador_time = 0;
-        simulador.aberto = 1;
-        simulador.perc_cliente_bilhete= 100;
-        simulador.buff_bilheteira[4];
-        simulador.hora_de_abertura= 8;
-        simulador.hora_de_fecho = 9;
-        simulador.divertimento_boolean = 1;
 
 
+        leConfig(); //define parametros do simulador
 
         //sem_init(&s_tam_fila_bilheteira,0, 10);
         //inicialização dos semaforos
@@ -91,90 +82,71 @@ void main(void)
         {
                 err_dump("pthread_create: erro criação thread");
         }
-        else printf("criou timer\n" );
+        else printf("│    ★ À acertar relógios.\n");
 
         tempo_aberto_parque();
 
-        if((pthread_create(&(t_cria_booleano_divertimento),NULL,(void *)divertimento,NULL))!=0) {
+        if((pthread_create(&(t_cria_booleano_divertimento),NULL,(void *)divertimento,NULL))!=0)
+        {
                 err_dump("pthread_create: erro criação thread");
         }
-        else
-        {
+        else printf("│%s ★ A realizar espionagem aos clientes *wink wink*.\n", gettime());
 
-                //printf("criou booleano dos divertimentos\n");
-                printf(" │%s ★ A realizar espionagem aos clientes *wink wink*.\n", gettime());
-        }
         if((pthread_create(&(t_cria_fury),NULL,(void *)fury325, NULL))!=0) {
 
                 err_dump("pthread_create: erro criação thread");
         }
-        else
-        {
+        else printf("│%s ★ À ligar a montanha russa Fury 325.\n", gettime());
 
-                //printf("criou fury325\n");
-                printf(" │%s ★ À ligar a montanha russa Fury 325.\n", gettime());
-        }
         if((pthread_create(&(t_cria_takabisha),NULL,(void *)takabisha, NULL))!=0) {
 
                 err_dump("pthread_create: erro criação thread");
         }
-        else
-        {
+        else printf("│%s ★ À ligar a montanha russa Takabisha.\n", gettime());
 
-                //printf("criou takabisha\n");
-                printf(" │%s ★ À ligar a montanha russa Takabisha.\n", gettime());
-        }
         if((pthread_create(&(t_cria_cliente),NULL,(void *)cria_cliente,newsockfd))!=0)
         {
                 err_dump("pthread_create: erro criação thread");
         }
-        else
-        {
+        else printf("│%s ★ Clientes começam a aproximar-se do recinto do parque.\n", gettime());
 
-                //printf("%d", conta_cliente);
-                printf(" │%s ★ Clientes começam a aproximar-se do recinto do parque.\n", gettime());
-        }
         if((pthread_create(&(t_cria_bilheteira),NULL,(void *)cria_bilheteira, NULL))!=0)
         {
                 err_dump("pthread_create: erro criação thread");
         }
-        else
-        {
-                printf(" │%s ★ À acender as luzes da bilhteira.\n", gettime());
-        }
+        else printf("│%s ★ À acender as luzes da bilhteira.\n", gettime());
 
-        while(conta_cliente < simulador.max_cliente);
+        while(strtol(strtok(gettime(), "h"), NULL, 0) != simulador.hora_de_fecho); //chegar só na hora de fecho
+        simulador.aberto = 0;
+        printf("│%s ★ A DisneyLand Madeira vai fechar!! À espera que os clientes vão embora.\n", gettime());
+
+        //while(conta_cliente < simulador.max_cliente && simulador.aberto);
+
+        pthread_join(t_cria_cliente, NULL); //espera que a thread que cria cliente termine
 
         for (int i = 0; i < simulador.max_cliente; i++) {
 
-                pthread_join(t_cliente[i], NULL);
+                pthread_join(t_cliente[i], NULL); //espera que todos os clientes terminem
                 usleep(150000);
-                //printf("VACAS DE MERDA");
         }
-        usleep(1500000);
 
-        pthread_join(t_cria_cliente, NULL);
-        simulador.aberto = 0;
-        printf("PUTA CHEGUEI AQUI\n");
-        //pthread_join(t_cria_takabisha, NULL);
-        printf("CRL O TAKABISHA NAO ACABOU\n");
-        //pthread_join(t_cria_fury, NULL);
-
-        
-        printf("FURY325 fechou as portas.\n" );
-        printf("TAKABISHA fechou as portas \n");
-        printf("O PARQUE FECHOU !!\n");
-
-        simulador.aberto = 0;
-        printf("PUTA CHEGUEI AQUI\n");
-        pthread_join(t_cria_takabisha, NULL);
-        printf("CRL O TAKABISHA NAO ACABOU\n");
+        printf("│%s ★ À fechar a montanha russa Fury 325.\n", gettime());
         pthread_join(t_cria_fury, NULL);
+        printf("│%s ★ Montanha russa  Fury 325 fechou.\n", gettime());
+
+        printf("│%s ★ À fechar a montanha russa Takabisha.\n", gettime());
+        pthread_join(t_cria_takabisha, NULL);
+        printf("│%s ★ Montanha russa Takabisha fechou.\n", gettime());
+
+        printf("│%s ★ À desligar os relógios.\n", gettime());
+        pthread_join(thread, NULL); // terminar thread virtual time
+        printf("│%s ★ À desligar o sistema de vigilância.\n", gettime());
+        pthread_join(t_cria_booleano_divertimento, NULL);
+        printf("│%s ★ À fechar as bilhetarias.\n", gettime());
+        pthread_join(t_cria_bilheteira, NULL);
 
 
-        printf(" │%s ★ A DisneyLand Madeira fechou!!\n", gettime());
-
-        printf("%s\n", "ACABOUUUUUUU");
+        printf("│%s ★ A DisneyLand Madeira fechou por hoje ☹\n", gettime());
         close(sockfd);                                                         //cuidado com isto senão não deixa acabar as threads
 
 }

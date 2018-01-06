@@ -14,8 +14,8 @@
 
 //constantes
 
-#define num_bilheteiras 4
 #define SIZEARRAY 17
+#define num_bilheteiras 4
 
 //---Prototypes--//
 //---util.c
@@ -50,7 +50,7 @@ void printReg(char registoDeAtividade[SIZEARRAY][90]);
 void printRod();
 void ecra(int sockfd);
 char * protocologoComunicacao(char * codigo, char * separador);
-struct estatisticas atualizaDadosEstatisticas(char * codigo, char * separador, struct estatisticas stats);
+void atualizaDadosEstatisticas(char * codigo, char * separador);
 void *cria_cliente(int socket);
 void *cria_bilheteira(int socket);
 void * takabisha (int socket);
@@ -73,8 +73,8 @@ int verifica_cliente_takabisha;
 //
 struct parque
 {
-
         int max_cliente;
+        int clientes_criados;
         int bilhetaria;
         int contador_time;
         int aberto;
