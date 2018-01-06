@@ -150,8 +150,7 @@ void *cliente_fury(int id)
         printf("│%s • O cliente %d esta na fila para entrar na montanha russa Fury 325.\n", gettime(), id);
         write(newsockfd, lineCriacao, strlen(lineCriacao));
         while(strcmp(line, "q") != 0)
-        {num_pessoas_fury325++;
-        sem_post(&s_fury325);
+        {
                 read(newsockfd, line, MAXLINE);
         }
         strcpy(line, " ");
