@@ -50,7 +50,10 @@ void printReg(char registoDeAtividade[SIZEARRAY][90]);
 void printRod();
 void ecra(int sockfd);
 char * protocologoComunicacao(char * codigo, char * separador);
+
 void atualizaDadosEstatisticas(char * codigo, char * separador);
+
+
 void *cria_cliente(int socket);
 void *cria_bilheteira(int socket);
 void * takabisha (int socket);

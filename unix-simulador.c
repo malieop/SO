@@ -131,12 +131,15 @@ void main(void)
         }
 
         printf("│%s ★ À fechar a montanha russa Fury 325.\n", gettime());
-        pthread_join(t_cria_fury, NULL);
-        printf("│%s ★ Montanha russa  Fury 325 fechou.\n", gettime());
+      //  sem_post(&s_cliente_verificado);
+      //  pthread_join(t_cria_fury, NULL);
+      //  printf("│%s ★ Montanha russa  Fury 325 fechou.\n", gettime());
 
         printf("│%s ★ À fechar a montanha russa Takabisha.\n", gettime());
-        pthread_join(t_cria_takabisha, NULL);
-        printf("│%s ★ Montanha russa Takabisha fechou.\n", gettime());
+      //  sem_post(&s_takabisha);
+      //  sem_post(&s_sai_takabisha);
+      //  pthread_join(t_cria_takabisha, NULL);
+      //  printf("│%s ★ Montanha russa Takabisha fechou.\n", gettime());
 
         printf("│%s ★ À desligar os relógios.\n", gettime());
         pthread_join(thread, NULL); // terminar thread virtual time

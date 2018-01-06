@@ -77,7 +77,7 @@ char * gettime() // funçao para obter o tempo virtual
         horas = horas + simulador.contador_time/60;
         min = simulador.contador_time % 60;
 
-        if(horas >= 24) horas = 0; //para a hora do dia não ultrapassar 24
+        if(horas >= 24) horas = 0;  //para a hora do dia não ultrapassar 24
 
         char * horasAtual = (char *) malloc(sizeof(char) * 3);
         sprintf(horasAtual, "%dh%d", horas, min);
@@ -117,20 +117,27 @@ void *fury325(int socket)
                                 sem_post(&s_cliente_tempo);
                         }
                         while(pessoas_verificadas < 4) {
+                                if(simulador.aberto){
                                 sem_wait(&s_cliente_verificado);
                                 pessoas_verificadas++;
+                              }
+                              else pessoas_verificadas = 4;
                         }
-
+                        if(simulador.aberto){
                         printf("│%s ★ Montanha russa Fury 325 começou uma viagem.\n", gettime());
                         sleep(4);
                         printf("│%s ★ Montanha russa Fury 325 terminou uma viagem.\n", gettime());
                         for ( int i = 0; i < pessoas_fury; i++) {
                                 sem_post(&s_finish_fury); // assinala que acabou a volta
                         }
+                      }
                 }
         }
+        for ( int i = 0; i < 4; i++) {
+                sem_post(&s_finish_fury); // assinala que acabou a volta
+        }
         for ( int i = 0; i < num_pessoas_fury325; i++) {
-                sem_post(&s_cliente_fury325);
+                sem_post(&s_cliente_tempo);
         }
 
         pthread_exit(NULL);
@@ -143,7 +150,8 @@ void *cliente_fury(int id)
         printf("│%s • O cliente %d esta na fila para entrar na montanha russa Fury 325.\n", gettime(), id);
         write(newsockfd, lineCriacao, strlen(lineCriacao));
         while(strcmp(line, "q") != 0)
-        {
+        {num_pessoas_fury325++;
+        sem_post(&s_fury325);
                 read(newsockfd, line, MAXLINE);
         }
         strcpy(line, " ");
@@ -175,8 +183,10 @@ void *cliente_fury(int id)
                 sem_wait(&s_finish_fury); // retira os clientes do fury
         }
         else{
+                pthread_mutex_lock(&mutex_fury);
                 sem_post(&s_cliente_tempo);
                 num_pessoas_fury325--;
+                pthread_mutex_unlock(&mutex_fury);
 
                 pthread_mutex_lock(&mutex_comunicacao);
                 sprintf(lineCriacao, "%s;%d;6;e", gettime(),id);
@@ -222,6 +232,7 @@ void * takabisha (int socket)
                         pthread_mutex_unlock(&mutex_takabisha);
 
                         sem_wait(&s_sai_takabisha);
+                        if(simulador.aberto){
                         if (verifica_cliente_takabisha != 1) {
                                 // tempo da volta da montanha
                                 printf("│%s ★ Montanha russa Takabisha saiu para uma viagem.\n", gettime());
@@ -234,6 +245,7 @@ void * takabisha (int socket)
                         else{
                                 verifica_cliente_takabisha = 0;
                         }
+                      }
                         //}
                 }
         }
