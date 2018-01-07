@@ -7,6 +7,10 @@ struct estatisticas stats;
 
 char * protocologoComunicacao(char * codigo, char * separador)
 {
+
+        char * fraseCompleta = (char *) malloc(sizeof(char) * 3);
+        int aux;
+
         char * hora = strtok(codigo, separador);
 
         char * idCliente = strtok(NULL, separador);
@@ -24,6 +28,69 @@ char * protocologoComunicacao(char * codigo, char * separador)
         case 5: acao = "ja nao se encontra";
                 break;
         case 6: acao = "desistiu de entrar";
+                break;
+        case 10:sprintf(fraseCompleta, "   │%s ★ A DisneyLand Madeira vai fechar!! ", hora); //cooloca informação pretinente
+
+                aux = strlen(fraseCompleta);
+                aux = 80 - aux;
+
+                sprintf(fraseCompleta, "%s %*s│", fraseCompleta, aux, " "); //adiciona os espaços vazios para enquadrar no ecrã
+                return fraseCompleta;
+
+                break;
+        case 11:sprintf(fraseCompleta, "   │%s ★ A fechar a montanha russa Fury 325. ", hora); //cooloca informação pretinente
+
+                aux = strlen(fraseCompleta);
+                aux = 80 - aux;
+
+                sprintf(fraseCompleta, "%s %*s│", fraseCompleta, aux, " "); //adiciona os espaços vazios para enquadrar no ecrã
+                return fraseCompleta;
+
+                break;
+        case 12:sprintf(fraseCompleta, "   │%s ★ A fechar a montanha russa Takabisha. ", hora); //cooloca informação pretinente
+
+                aux = strlen(fraseCompleta);
+                aux = 80 - aux;
+
+                sprintf(fraseCompleta, "%s %*s│", fraseCompleta, aux, " "); //adiciona os espaços vazios para enquadrar no ecrã
+                return fraseCompleta;
+
+                break;
+        case 13:sprintf(fraseCompleta, "   │%s ★ A desligar os relogios. ", hora); //cooloca informação pretinente
+
+                aux = strlen(fraseCompleta);
+                aux = 80 - aux;
+
+                sprintf(fraseCompleta, "%s %*s│", fraseCompleta, aux, " "); //adiciona os espaços vazios para enquadrar no ecrã
+                return fraseCompleta;
+
+                break;
+        case 14:sprintf(fraseCompleta, "   │%s ★ A desligar o sistema de vigilancia. ", hora); //cooloca informação pretinente
+
+                aux = strlen(fraseCompleta);
+                aux = 80 - aux;
+
+                sprintf(fraseCompleta, "%s %*s│", fraseCompleta, aux, " "); //adiciona os espaços vazios para enquadrar no ecrã
+                return fraseCompleta;
+
+                break;
+        case 15:sprintf(fraseCompleta, "   │%s ★ A fechar as bilhetarias. ", hora); //cooloca informação pretinente
+
+                aux = strlen(fraseCompleta);
+                aux = 80 - aux;
+
+                sprintf(fraseCompleta, "%s %*s│", fraseCompleta, aux, " "); //adiciona os espaços vazios para enquadrar no ecrã
+                return fraseCompleta;
+
+                break;
+        case 16:sprintf(fraseCompleta, "   │%s ★ A DisneyLand Madeira fechou por hoje ☹ ", hora); //cooloca informação pretinente
+
+                aux = strlen(fraseCompleta);
+                aux = 80 - aux;
+
+                sprintf(fraseCompleta, "%s %*s│", fraseCompleta, aux+2, " "); //adiciona os espaços vazios para enquadrar no ecrã
+                return fraseCompleta;
+
                 break;
         default: acao = "ERRO!";
         }
@@ -43,11 +110,10 @@ char * protocologoComunicacao(char * codigo, char * separador)
         default: lugar = "ERRO!";
         }
 
-        char * fraseCompleta = (char *) malloc(sizeof(char) * 3); //Não sei bem, mas a internet disse e funciona!
 
         sprintf(fraseCompleta, "   │%s • O cliente %s %s %s. ", hora, idCliente, acao, lugar); //cooloca informação pretinente
 
-        int aux = strlen(fraseCompleta);
+        aux = strlen(fraseCompleta);
         aux = 80 - aux;
 
         sprintf(fraseCompleta, "%s %*s│", fraseCompleta, aux, " "); //adiciona os espaços vazios para enquadrar no ecrã

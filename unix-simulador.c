@@ -117,8 +117,19 @@ void main(void)
 
         while(strtol(strtok(gettime(), "h"), NULL, 0) != simulador.hora_de_fecho && conta_cliente < simulador.clientes_criados); //chegar só na hora de fecho
         simulador.aberto = 0;
-        printf("│%s ★ A DisneyLand Madeira vai fechar!! À espera que os clientes vão embora.\n", gettime());
 
+
+        pthread_mutex_lock(&mutex_comunicacao);
+        sprintf(lineCriacao, "%s;%d;10", gettime(),0);
+        printf("│%s ★ A DisneyLand Madeira vai fechar!! À espera que os clientes vão embora.\n", gettime());
+        write(newsockfd, lineCriacao, strlen(lineCriacao));
+        while(strcmp(line, "q") != 0)
+        {
+                read(newsockfd, line, MAXLINE);
+        }
+        strcpy(line, " ");
+        usleep(150000);
+        pthread_mutex_unlock(&mutex_comunicacao);
 
         pthread_join(t_cria_cliente, NULL); //espera que a thread que cria cliente termine
 
@@ -128,19 +139,81 @@ void main(void)
                 usleep(150000);
         }
 
+        pthread_mutex_lock(&mutex_comunicacao);
+        sprintf(lineCriacao, "%s;%d;11", gettime(),0);
         printf("│%s ★ À fechar a montanha russa Fury 325.\n", gettime());
+        write(newsockfd, lineCriacao, strlen(lineCriacao));
+        while(strcmp(line, "q") != 0)
+        {
+                read(newsockfd, line, MAXLINE);
+        }
+        strcpy(line, " ");
+        usleep(150000);
+        pthread_mutex_unlock(&mutex_comunicacao);
 
+        pthread_mutex_lock(&mutex_comunicacao);
+        sprintf(lineCriacao, "%s;%d;12", gettime(),0);
         printf("│%s ★ À fechar a montanha russa Takabisha.\n", gettime());
+        write(newsockfd, lineCriacao, strlen(lineCriacao));
+        while(strcmp(line, "q") != 0)
+        {
+                read(newsockfd, line, MAXLINE);
+        }
+        strcpy(line, " ");
+        usleep(150000);
+        pthread_mutex_unlock(&mutex_comunicacao);
 
+
+        pthread_mutex_lock(&mutex_comunicacao);
+        sprintf(lineCriacao, "%s;%d;13", gettime(),0);
         printf("│%s ★ À desligar os relógios.\n", gettime());
+        write(newsockfd, lineCriacao, strlen(lineCriacao));
+        while(strcmp(line, "q") != 0)
+        {
+                read(newsockfd, line, MAXLINE);
+        }
+        strcpy(line, " ");
+        usleep(150000);
+        pthread_mutex_unlock(&mutex_comunicacao);
         pthread_join(thread, NULL); // terminar thread virtual time
-        printf("│%s ★ À desligar o sistema de vigilância.\n", gettime());
+
+        pthread_mutex_lock(&mutex_comunicacao);
+        sprintf(lineCriacao, "%s;%d;14", gettime(),0);
+        printf("│%s ★ À desligar o sistema de vigilância.\n", gettime());;
+        write(newsockfd, lineCriacao, strlen(lineCriacao));
+        while(strcmp(line, "q") != 0)
+        {
+                read(newsockfd, line, MAXLINE);
+        }
+        strcpy(line, " ");
+        usleep(150000);
+        pthread_mutex_unlock(&mutex_comunicacao);
         pthread_join(t_cria_booleano_divertimento, NULL);
+
+        pthread_mutex_lock(&mutex_comunicacao);
+        sprintf(lineCriacao, "%s;%d;15", gettime(),0);
         printf("│%s ★ À fechar as bilhetarias.\n", gettime());
+        write(newsockfd, lineCriacao, strlen(lineCriacao));
+        while(strcmp(line, "q") != 0)
+        {
+                read(newsockfd, line, MAXLINE);
+        }
+        strcpy(line, " ");
+        usleep(150000);
+        pthread_mutex_unlock(&mutex_comunicacao);
         pthread_join(t_cria_bilheteira, NULL);
 
-
+        pthread_mutex_lock(&mutex_comunicacao);
+        sprintf(lineCriacao, "%s;%d;16", gettime(),0);
         printf("│%s ★ A DisneyLand Madeira fechou por hoje ☹\n", gettime());
+        write(newsockfd, lineCriacao, strlen(lineCriacao));
+        while(strcmp(line, "q") != 0)
+        {
+                read(newsockfd, line, MAXLINE);
+        }
+        strcpy(line, " ");
+        usleep(150000);
+        pthread_mutex_unlock(&mutex_comunicacao);
 
         //terminar tudo
         pthread_mutex_lock(&mutex_comunicacao);

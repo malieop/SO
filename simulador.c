@@ -526,7 +526,6 @@ void *trata_cliente(int id)
         pthread_mutex_lock(&mutex_comunicacao);
         sprintf(lineCriacao, "%s;%d;5;b", gettime(),id);
         printf("│%s • O Cliente %d saiu do parque.\n", gettime(), id );
-        //printf("%s\n", "CLiente saiu");
         write(newsockfd, lineCriacao, strlen(lineCriacao));
         while(strcmp(line, "q") != 0)
         {
@@ -544,7 +543,7 @@ void *trata_cliente(int id)
 void *cria_cliente(int socket)
 {
         newsockfd = socket;
-        
+
         for (int i = 0; i < simulador.clientes_criados; i++) {
 
                 if(!simulador.aberto) break;
