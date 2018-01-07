@@ -577,10 +577,7 @@ void *cria_cliente(int socket)
 
 void *cria_bilheteira(int socket)
 {
-
-
         for (int i = 0; i < 4; i++) {
-                /* code */
 
                 if((pthread_create(&(t_bilheteira[i]),NULL,(void *)bilheteira,NULL))!=0)
                 {
