@@ -57,15 +57,18 @@ void main(void)
         sem_init(&s_tam_max_parque,0, simulador.max_cliente);
         sem_init(&s_prod_bilheteira,0, 4);
         sem_init(&s_cons_bilheteira,0, 0);
-        sem_init(&s_prio_takabisha,0, 0);
+        sem_init(&s_takabisha,0, 0);
+        sem_init(&s_prio_takabisha,0, 0); 
         sem_init(&s_sem_prio_takabisha,0, 0);
         sem_init(&s_finish_takabisha,0, 0);
         sem_init(&s_fury325,0, 0);
         sem_init(&s_cliente_fury325,0,0);
         sem_init(&s_finish_fury,0,0);
-        sem_init(&s_comunicacaofury325,0,0);
+        //sem_init(&s_comunicacaofury325,0,0);
+        sem_init(&s_cliente_tempo,0,0);
         sem_init(&s_sai_takabisha,0,0);
         sem_init(&s_cliente_verificado,0,0);
+
 
         pthread_mutex_init(&mutex_fury,NULL);
         pthread_mutex_init(&mutex_takabisha,NULL);

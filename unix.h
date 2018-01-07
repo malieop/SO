@@ -123,9 +123,9 @@ sem_t s_cliente_verificado;
 
 
 
-struct cliente_struct cliente[50000];
+struct cliente_struct cliente[5000];
 struct parque simulador;
-pthread_t static t_cliente [50000];
+pthread_t static t_cliente [5000];
 pthread_t thread;
 pthread_t t_bilheteira[1000];
 pthread_t t_cria_cliente;

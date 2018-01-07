@@ -117,20 +117,20 @@ void *fury325(int socket)
                                 sem_post(&s_cliente_tempo);
                         }
                         while(pessoas_verificadas < 4) {
-                                if(simulador.aberto){
-                                sem_wait(&s_cliente_verificado);
-                                pessoas_verificadas++;
-                              }
-                              else pessoas_verificadas = 4;
+                                if(simulador.aberto) {
+                                        sem_wait(&s_cliente_verificado);
+                                        pessoas_verificadas++;
+                                }
+                                else pessoas_verificadas = 4;
                         }
-                        if(simulador.aberto){
-                        printf("│%s ★ Montanha russa Fury 325 começou uma viagem.\n", gettime());
-                        sleep(1);
-                        printf("│%s ★ Montanha russa Fury 325 terminou uma viagem.\n", gettime());
-                        for ( int i = 0; i < pessoas_fury; i++) {
-                                sem_post(&s_finish_fury); // assinala que acabou a volta
+                        if(simulador.aberto) {
+                                printf("│%s ★ Montanha russa Fury 325 começou uma viagem.\n", gettime());
+                                sleep(1);
+                                printf("│%s ★ Montanha russa Fury 325 terminou uma viagem.\n", gettime());
+                                for ( int i = 0; i < pessoas_fury; i++) {
+                                        sem_post(&s_finish_fury); // assinala que acabou a volta
+                                }
                         }
-                      }
                 }
         }
         for ( int i = 0; i < 4; i++) {
@@ -140,7 +140,7 @@ void *fury325(int socket)
                 sem_post(&s_cliente_tempo);
         }
 
-        pthread_exit(NULL);
+        pthread_exit(&t_cria_fury);
 }
 
 void *cliente_fury(int id)
@@ -236,19 +236,19 @@ void * takabisha (int socket)
                         pthread_mutex_unlock(&mutex_takabisha);
 
                         sem_wait(&s_sai_takabisha);
-                        if(simulador.aberto){
-                        if (verifica_cliente_takabisha != 1) {
-                                // tempo da volta da montanha
-                                printf("│%s ★ Montanha russa Takabisha saiu para uma viagem.\n", gettime());
-                                sleep(1);
-                                printf("│%s ★ Montanha russa Takabisha acabou uma viagem.\n", gettime());
-                                sem_post(&s_finish_takabisha);
-                                sem_wait(&s_comunicacao_takabisha);
+                        if(simulador.aberto) {
+                                if (verifica_cliente_takabisha != 1) {
+                                        // tempo da volta da montanha
+                                        printf("│%s ★ Montanha russa Takabisha saiu para uma viagem.\n", gettime());
+                                        sleep(1);
+                                        printf("│%s ★ Montanha russa Takabisha acabou uma viagem.\n", gettime());
+                                        sem_post(&s_finish_takabisha);
+                                        sem_wait(&s_comunicacao_takabisha);
+                                }
+                                else{
+                                        verifica_cliente_takabisha = 0;
+                                }
                         }
-                        else{
-                                verifica_cliente_takabisha = 0;
-                        }
-                      }
                 }
         }
 
@@ -261,7 +261,7 @@ void * takabisha (int socket)
                 sem_post(&s_finish_takabisha);
         }
 
-        pthread_exit(NULL);
+        pthread_exit(&t_cria_takabisha);
 }
 
 void *cliente_takabisha(int id)
@@ -537,14 +537,14 @@ void *trata_cliente(int id)
         pthread_mutex_unlock(&mutex_comunicacao);
         sem_post(&s_tam_max_parque);
 
-        pthread_exit(NULL);
+        pthread_exit(&t_cliente[id]);
 
 }
 
 void *cria_cliente(int socket)
 {
         newsockfd = socket;
-        
+
         for (int i = 0; i < simulador.clientes_criados; i++) {
 
                 if(!simulador.aberto) break;
@@ -573,14 +573,16 @@ void *cria_cliente(int socket)
 
         }
 
-        pthread_exit(NULL); //acaba a thread
+        pthread_exit(&t_cria_cliente); //acaba a thread
 }
 
 void *cria_bilheteira(int socket)
 {
-        int i = 0;
-        while (simulador.aberto) {
-                // cria bilheteira enquanto for menor que o numero max de bilheteiras
+
+
+        for (int i = 0; i < 4; i++) {
+                /* code */
+
                 if((pthread_create(&(t_bilheteira[i]),NULL,(void *)bilheteira,NULL))!=0)
                 {
                         err_dump("pthread_create: erro criação thread");
@@ -591,8 +593,9 @@ void *cria_bilheteira(int socket)
                         conta_bilheteira++;
                         printf("│%s ★ As  bilheteiras já abriram.\n", gettime());
                 }
-                usleep(150000 * (rand()%100));
+                usleep(150000);
         }
 
-        pthread_exit(NULL);
 }
+
+//  pthread_exit(NULL);
