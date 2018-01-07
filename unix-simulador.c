@@ -116,7 +116,7 @@ void main(void)
         }
         else printf("│%s ★ À acender as luzes da bilhteira.\n", gettime());
 
-        while(strtol(strtok(gettime(), "h"), NULL, 0) != simulador.hora_de_fecho); //chegar só na hora de fecho
+        while(strtol(strtok(gettime(), "h"), NULL, 0) != simulador.hora_de_fecho && conta_cliente < simulador.clientes_criados); //chegar só na hora de fecho
         simulador.aberto = 0;
         printf("│%s ★ A DisneyLand Madeira vai fechar!! À espera que os clientes vão embora.\n", gettime());
 
@@ -150,6 +150,16 @@ void main(void)
 
 
         printf("│%s ★ A DisneyLand Madeira fechou por hoje ☹\n", gettime());
+
+        //terminar tudo
+        pthread_mutex_lock(&mutex_comunicacao);
+        write(newsockfd, "end", strlen("end"));
+        while(strcmp(line, "q") != 0)
+        {
+                read(newsockfd, line, MAXLINE);
+        }
+        pthread_mutex_unlock(&mutex_comunicacao);
+
         close(sockfd);                                                         //cuidado com isto senão não deixa acabar as threads
 
 }

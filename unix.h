@@ -13,8 +13,7 @@
 #define UNIXDG_TMP   "/tmp/dgXXXXXXX"
 
 //constantes
-
-#define SIZEARRAY 17
+#define SIZEARRAY 16
 #define num_bilheteiras 4
 
 //---Prototypes--//
@@ -24,6 +23,7 @@ int readn(int fd, char *ptr, int nbytes);
 int writen(int fd, char *ptr, int nbytes);
 int readline(int fd, char *ptr, int maxlen);
 //--simulador.c
+void leConfig();
 void tempo_aberto_parque();
 void * virtualtime();
 char * gettime();
@@ -43,6 +43,7 @@ void * cria_bilheteira(int socket);
 //--monitor.c
 char * protocologoComunicacao(char * codigo, char * separador);
 void atualizaDadosEstatisticas(char * codigo, char * separador);
+void escreveEstatisticasFicheiro();
 int acertaStatsN(int stat);
 void printCab();
 void printStats();
@@ -50,15 +51,6 @@ void printReg(char registoDeAtividade[SIZEARRAY][90]);
 void printRod();
 void ecra(int sockfd);
 char * protocologoComunicacao(char * codigo, char * separador);
-
-void atualizaDadosEstatisticas(char * codigo, char * separador);
-
-
-void *cria_cliente(int socket);
-void *cria_bilheteira(int socket);
-void * takabisha (int socket);
-void * fury325(int socket);
-void *divertimento();
 
 //variaveis globais
 int conta_cliente;

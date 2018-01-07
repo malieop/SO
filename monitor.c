@@ -62,57 +62,61 @@ void atualizaDadosEstatisticas(char * codigo, char * separador)
 
         switch (strtol(strtok(NULL, separador),NULL,0))
         {
-        case 1: //chegou
-                break;
-        case 2: //entrou
-                switch (*strtok(NULL, separador)) {
-                case 'a': //ao recinto do parque
+                case 1: //chegou
                         break;
-                case 'b': //no recinto do parque
-                        stats.total_parque++;
+                case 2: //entrou
+                        switch (*strtok(NULL, separador))
+                        {
+                                case 'a': //ao recinto do parque
+                                        break;
+                                case 'b': //no recinto do parque
+                                        stats.total_parque++;
+                                        break;
+                                case 'c': // na bilhetaria
+                                        break;
+                                case 'd'://na montanha russa Takabisha
+                                        stats.total_montanha1++;
+                                        break;
+                                case 'e': //na montanha Fury 325
+                                        break;
+                        }
                         break;
-                case 'c': // na bilhetaria
+                case 3: //esta na fila para comprar
                         break;
-                case 'd'://na montanha russa Takabisha
-                        stats.total_montanha1++;
+                case 4: //esta na fila para entrar
                         break;
-                case 'e': //na montanha Fury 325
-                        stats.total_montanha2++;
+                case 5: //ja não se encontra
+                        switch (*strtok(NULL, separador))
+                        {
+                                case 'c': //na bilhetaria
+                                        stats.total_bilhetes_vendidos++;
+                                        break;
+                                case 'e': //na montanha Fury 325
+                                        stats.total_montanha2++;
+                                        break;
+                        }
                         break;
-                }
-                break;
-        case 3: //esta na fila para comprar
-                break;
-        case 4: //esta na fila para entrar
-                break;
-        case 5: //ja não se encontra
-                switch (*strtok(NULL, separador)) {
-                case 'c':
-                        stats.total_bilhetes_vendidos++;
+                case 6: //desistiu de entrar
+                        stats.tempo_desistencias += 10;
+                        stats.total_desistencias++;
                         break;
-                }
-        case 6: //desistiu de entrar
-                stats.tempo_desistencias += 10;
-                stats.total_desistencias++;
-                break;
         }
 }
 
-/*void escreveEstatisticasFicheiro(struct estatisticas stats)
-   {
-        FILE *file;
+void escreveEstatisticasFicheiro()
+{
+        FILE * file = fopen("estatisticas.txt", "w"); //w+ - abre ficheiro, se não existe cria
 
-        file = fopen("estatisticas", "w+"); //w+ - abre ficheiro, se não existe cria
-        fprintf(file, "ESTATISTICAS\n");
-        fprintf(file, "Número de pessoas que entrou no parque nesta simulação: %d pessoas\n ", stats.total_parque);
-        fprintf(file, "Número de bilhetes vendidos nesta simulação: %d bilhetes\n ", stats.total_bilhetes_vendidos);
-        fprintf(file, "Número de pessoas que andou na montanha russa Fury 325: %d pessoas\n ", stats.total_montanha1);
-        fprintf(file, "Número de pessoas que andou na montanha russa Takabisha: %d pessoas\n ", stats.total_montanha2);
-        fprintf(file, "Número de pessoas que desistiu enquanto estava na filha: %d pessoas\n ", stats.total_desistencias);
-        fprintf(file, "Tempo media antes de desistencia: %d mins\n ", (stats.tempo_desistencias/stats.total_desistencias));
+        fprintf(file, "┌──────────────────────────────────ESTATISTICAS───────────────────────────\n");
+        fprintf(file, "│ • Número de pessoas que entrou no parque nesta simulação: %d pessoas\n", stats.total_parque);
+        fprintf(file, "│ • Número de bilhetes vendidos nesta simulação: %d bilhetes\n", stats.total_bilhetes_vendidos);
+        fprintf(file, "│ • Número de pessoas que andou na montanha russa Fury 325: %d pessoas\n", stats.total_montanha1);
+        fprintf(file, "│ • Número de pessoas que andou na montanha russa Takabisha: %d pessoas\n", stats.total_montanha2);
+        fprintf(file, "│ • Número de pessoas que desistiu enquanto estava na fila: %d pessoas\n", stats.total_desistencias);
+        //fprintf(file, "│ • Tempo media antes de desistencia: %d mins\n ", (stats.tempo_desistencias/stats.total_desistencias));
 
-        fclose(file);
-   }*/
+        //fclose(file);
+}
 
 int acertaStatsN(int stat)
 {
@@ -122,15 +126,23 @@ int acertaStatsN(int stat)
 
 void printCab()
 {
-        printf("   ┌─────────────────────────────────────────────────────────────────────────┐\n");
-        printf("   │                          DISNEYLAND MADEIRA                             │\n");
-        printf("   │                    *Sistemas Operativos 2017/2018*                      │\n");
-        printf("   ├─────────────────────────────────────────────────────────────────────────┤\n");
-        // printf("   ┌──────────────────────────────────────────────────█▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█─┐\n");
-        // printf("   │         DISNEYLAND MADEIRA                       █░░╦ ╦╔╗╦ ╔╗╔╗╔╦╗╔╗░░█ │\n");
-        // printf("   │   *Sistemas Operativos 2017/2018*                █░░║║║╠ ║ ║ ║║║║║╠ ░░█ │\n");
-        // printf("   │       Universidade da Madeira                    █░░╚╩╝╚╝╚╝╚╝╚╝╩ ╩╚╝░░█ │\n");
-        // printf("   ├──────────────────────────────────────────────────█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█─┤\n");
+        if (estado == 0)
+        {
+                printf("   ┌─────────────────────────█▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█──────────────────────────┐\n");
+                printf("   │                         █░░╦ ╦╔╗╦ ╔╗╔╗╔╦╗╔╗░░█                          │\n");
+                printf("   │                         █░░║║║╠ ║ ║ ║║║║║╠ ░░█                          │\n");
+                printf("   │                         █░░╚╩╝╚╝╚╝╚╝╚╝╩ ╩╚╝░░█                          │\n");
+                printf("   ├─────────────────────────█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█──────────────────────────┤\n");
+        }
+        else
+        {
+                printf("   ┌─────────────────────────────────────────────────────────────────────────┐\n");
+                printf("   │                          DISNEYLAND MADEIRA                             │\n");
+                printf("   │                    *Sistemas Operativos 2017/2018*                      │\n");
+                printf("   │                        Universidade da Madeira                          │\n");
+                printf("   ├─────────────────────────────────────────────────────────────────────────┤\n");
+        }
+
 }
 
 void printStats()
@@ -147,7 +159,7 @@ void printStats()
                 printf("   │                                                                         │\n");
 
         }
-        else if (estado == 1)
+        else
         {
                 int aux;
 
@@ -197,11 +209,11 @@ void printStats()
 
                 }
 
-                if(acertaStatsN(stats.total_montanha2) <= 32)
+                if(acertaStatsN(stats.total_desistencias) <= 32)
                 {
-                        if(33-acertaStatsN(stats.total_montanha2) < 0) aux = 0;
-                        else aux = 33-acertaStatsN(stats.total_montanha2);
-                        printf("   │• Numero total de desistentes: %d pessoas %*s│\n",stats.total_montanha2, aux, " ");
+                        if(33-acertaStatsN(stats.total_desistencias) < 0) aux = 0;
+                        else aux = 33-acertaStatsN(stats.total_desistencias);
+                        printf("   │• Numero total de desistentes: %d pessoas %*s│\n",stats.total_desistencias, aux, " ");
                 }
                 else
                 {
@@ -231,7 +243,8 @@ void printReg(char registoDeAtividade[SIZEARRAY][90])
 void printRod()
 {
         if(estado == 0) printf("   │                         [C]-Começar simulação                           │\n");
-        else printf("   │                          [T]-Terminar simulação                         │\n");
+        else if(estado == 1) printf("   │                          Simulação à decorrer                           │\n");
+        else if(estado == 2) printf("   │                          Simulação terminada                            │\n");
         printf("   ├─────────────────────────────────────────────────────────────────────────┤\n");
         printf("   │                         Projecto Realizado por:                         │\n");
         printf("   │              •André Nunes •Diogo Coelho •Susana Gonçalves               │\n");
@@ -282,40 +295,57 @@ void ecra(int sockfd)
                 {
                         if((n = read(sockfd, line, MAXLINE-1)) > 0)
                         {
-                                //é preciso porque partimos a string duas vezes, e não podemos fazer no mesmo apontador
-                                char * auxLine = (char *) malloc(sizeof(char) * 3); //aloca memoria para auxLine
-                                strcpy(auxLine, line); // copia a line para a auxLine
-
-                                atualizaDadosEstatisticas(line, ";");
-                                //atualizaDadosEstatisticas(line, ";"); //atualiza a estrutura consoante a mensagem recebida
-
-                                if(nArray <= SIZEARRAY - 1)
+                                if(strcmp(line, "end") == 0)
                                 {
-                                        strcpy( registoDeAtividade[nArray], protocologoComunicacao(auxLine, ";"));
-                                        nArray++;
+                                        estado = 2;
                                 }
                                 else
                                 {
-                                        char * temp;
-                                        int i;
-                                        for(i = 0; i < SIZEARRAY; i++)
+                                        //é preciso porque partimos a string duas vezes, e não podemos fazer no mesmo apontador
+                                        char * auxLine = (char *) malloc(sizeof(char) * 3); //aloca memoria para auxLine
+                                        strcpy(auxLine, line); // copia a line para a auxLine
+
+                                        atualizaDadosEstatisticas(line, ";");
+                                        //atualizaDadosEstatisticas(line, ";"); //atualiza a estrutura consoante a mensagem recebida
+
+                                        if(nArray <= SIZEARRAY - 1)
                                         {
-                                                strcpy(registoDeAtividade[i], registoDeAtividade[i+1]);
+                                                strcpy( registoDeAtividade[nArray], protocologoComunicacao(auxLine, ";"));
+                                                nArray++;
                                         }
-                                        strcpy( registoDeAtividade[SIZEARRAY-1], protocologoComunicacao(auxLine, ";"));
+                                        else
+                                        {
+                                                char * temp;
+                                                int i;
+                                                for(i = 0; i < SIZEARRAY; i++)
+                                                {
+                                                        strcpy(registoDeAtividade[i], registoDeAtividade[i+1]);
+                                                }
+                                                strcpy( registoDeAtividade[SIZEARRAY-1], protocologoComunicacao(auxLine, ";"));
+                                        }
+
+                                        bzero(line,MAXLINE);
+
+                                        printCab();
+                                        printStats();
+                                        printReg(registoDeAtividade);
+                                        printRod();
+
+                                        write(sockfd, "q", MAXLINE);
                                 }
-
-                                bzero(line,MAXLINE);
-
-                                printCab();
-                                printStats();
-                                printReg(registoDeAtividade);
-                                printRod();
-
-                                write(sockfd, "q", MAXLINE);
                         }
 
                         else if(n<0) printf("ERRO LENDO DA SOCKFD");
+                }else if(estado == 2)
+                {
+                        printCab();
+                        printStats();
+                        printReg(registoDeAtividade);
+                        printRod();
+
+                        escreveEstatisticasFicheiro();
+                        write(sockfd, "q", MAXLINE);
+                        break;
                 }
         }
 }

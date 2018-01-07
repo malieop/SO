@@ -125,7 +125,7 @@ void *fury325(int socket)
                         }
                         if(simulador.aberto){
                         printf("│%s ★ Montanha russa Fury 325 começou uma viagem.\n", gettime());
-                        sleep(4);
+                        sleep(1);
                         printf("│%s ★ Montanha russa Fury 325 terminou uma viagem.\n", gettime());
                         for ( int i = 0; i < pessoas_fury; i++) {
                                 sem_post(&s_finish_fury); // assinala que acabou a volta
@@ -178,6 +178,19 @@ void *cliente_fury(int id)
                 usleep(150000);
                 pthread_mutex_unlock(&mutex_comunicacao);
 
+                sleep(1);
+
+                pthread_mutex_lock(&mutex_comunicacao);
+                sprintf(lineCriacao, "%s;%d;5;e", gettime(),id);
+                printf("│%s • O cliente %d já não se encontra na montanha russa Fury 325.\n", gettime(), id);
+                write(newsockfd, lineCriacao, strlen(lineCriacao));
+                while(strcmp(line, "q") != 0)
+                {
+                        read(newsockfd, line, MAXLINE);
+                }
+                strcpy(line, " ");
+                pthread_mutex_unlock(&mutex_comunicacao);
+
                 sem_post(&s_cliente_verificado);
                 sem_wait(&s_finish_fury); // retira os clientes do fury
         }
@@ -196,7 +209,6 @@ void *cliente_fury(int id)
                         read(newsockfd, line, MAXLINE);
                 }
                 strcpy(line, " ");
-                usleep(150000);
                 pthread_mutex_unlock(&mutex_comunicacao);
         }
 }
@@ -235,7 +247,7 @@ void * takabisha (int socket)
                         if (verifica_cliente_takabisha != 1) {
                                 // tempo da volta da montanha
                                 printf("│%s ★ Montanha russa Takabisha saiu para uma viagem.\n", gettime());
-                                sleep(3);
+                                sleep(1);
                                 printf("│%s ★ Montanha russa Takabisha acabou uma viagem.\n", gettime());
                                 //for ( int i = 0; i < pessoas_para_entrar; i++) {
                                 sem_post(&s_finish_takabisha);
@@ -346,6 +358,7 @@ void *cliente_takabisha(int id)
                         }
                         else{
                                 verifica_cliente_takabisha = 1;
+                                sem_post(&s_sai_takabisha);
                         }
                 }
         }
