@@ -257,8 +257,6 @@ void printRod()
 
 void ecra(int sockfd)
 {
-        //estado = 1;
-        //struct estatisticas stats = {0, 0, 0, 0, 0, 0};
         stats.total_parque = 0;
         char registoDeAtividade[SIZEARRAY][90];
         int nArray = 0;
@@ -306,7 +304,6 @@ void ecra(int sockfd)
                                         strcpy(auxLine, line); // copia a line para a auxLine
 
                                         atualizaDadosEstatisticas(line, ";");
-                                        //atualizaDadosEstatisticas(line, ";"); //atualiza a estrutura consoante a mensagem recebida
 
                                         if(nArray <= SIZEARRAY - 1)
                                         {

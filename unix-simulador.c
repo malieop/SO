@@ -53,7 +53,6 @@ void main(void)
 
         leConfig(); //define parametros do simulador
 
-        //sem_init(&s_tam_fila_bilheteira,0, 10);
         //inicialização dos semaforos
         sem_init(&s_tam_max_parque,0, simulador.max_cliente);
         sem_init(&s_prod_bilheteira,0, 4);
@@ -120,7 +119,6 @@ void main(void)
         simulador.aberto = 0;
         printf("│%s ★ A DisneyLand Madeira vai fechar!! À espera que os clientes vão embora.\n", gettime());
 
-        //while(conta_cliente < simulador.max_cliente && simulador.aberto);
 
         pthread_join(t_cria_cliente, NULL); //espera que a thread que cria cliente termine
 
@@ -131,15 +129,8 @@ void main(void)
         }
 
         printf("│%s ★ À fechar a montanha russa Fury 325.\n", gettime());
-      //  sem_post(&s_cliente_verificado);
-      //  pthread_join(t_cria_fury, NULL);
-      //  printf("│%s ★ Montanha russa  Fury 325 fechou.\n", gettime());
 
         printf("│%s ★ À fechar a montanha russa Takabisha.\n", gettime());
-      //  sem_post(&s_takabisha);
-      //  sem_post(&s_sai_takabisha);
-      //  pthread_join(t_cria_takabisha, NULL);
-      //  printf("│%s ★ Montanha russa Takabisha fechou.\n", gettime());
 
         printf("│%s ★ À desligar os relógios.\n", gettime());
         pthread_join(thread, NULL); // terminar thread virtual time

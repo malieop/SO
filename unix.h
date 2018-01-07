@@ -19,9 +19,6 @@
 //---Prototypes--//
 //---util.c
 void err_dump(char *msg);
-int readn(int fd, char *ptr, int nbytes);
-int writen(int fd, char *ptr, int nbytes);
-int readline(int fd, char *ptr, int maxlen);
 //--simulador.c
 void leConfig();
 void tempo_aberto_parque();

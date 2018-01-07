@@ -217,18 +217,12 @@ void * takabisha (int socket)
 {
         while (simulador.aberto)
         {
-                //int pessoas_para_entrar = 0;
-                //printf("TAKABISHA preparado para andar.\n" );
                 printf("│%s ★ Montanha russa Takabisha pronta para receber clientes.\n", gettime());
-                //  while (pessoas_para_entrar < 2 ) {
                 sem_wait(&s_takabisha);
                 if(simulador.tempo_aberto > simulador.contador_time )
                 {
-                        //    pessoas_para_entrar++;
-                        //  }
                         pthread_mutex_lock(&mutex_takabisha);
 
-                        //  printf("TAKABISHA fechou as portas \n")  for (int i = 0; i < pessoas_para_entrar; i++) {
                         if (num_prio_takabisha>= 1)
                         {
                                 num_prio_takabisha--;
@@ -239,7 +233,6 @@ void * takabisha (int socket)
                                 num_sem_prio_takabisha--;
                                 sem_post(&s_sem_prio_takabisha);
                         }
-                        //  }
                         pthread_mutex_unlock(&mutex_takabisha);
 
                         sem_wait(&s_sai_takabisha);
@@ -249,7 +242,6 @@ void * takabisha (int socket)
                                 printf("│%s ★ Montanha russa Takabisha saiu para uma viagem.\n", gettime());
                                 sleep(1);
                                 printf("│%s ★ Montanha russa Takabisha acabou uma viagem.\n", gettime());
-                                //for ( int i = 0; i < pessoas_para_entrar; i++) {
                                 sem_post(&s_finish_takabisha);
                                 sem_wait(&s_comunicacao_takabisha);
                         }
@@ -257,7 +249,6 @@ void * takabisha (int socket)
                                 verifica_cliente_takabisha = 0;
                         }
                       }
-                        //}
                 }
         }
 
@@ -384,7 +375,6 @@ void *escolhedivertimento(int id)
         case 0:
                 cliente[id].tempo_chegou_divertimento = simulador.contador_time;
                 cliente_takabisha(id);
-                //printf("cliente cheogu aqui crl\n" );
                 break;
 
         case 1:
@@ -411,8 +401,6 @@ void *bilheteira()
                 {
                         simulador.buff_bilheteira[produz_bilheteira] = 2;
                 }
-                //printf("%d\n",simulador.buff_bilheteira[produz_bilheteira] );
-                //printf("%d\n", produz_bilheteira);
                 produz_bilheteira = ( produz_bilheteira + 1 )% 4;
                 pthread_mutex_unlock(&mutex_bilheteira);
                 sem_post(&s_cons_bilheteira);
@@ -423,7 +411,6 @@ void *bilheteira()
 
 void bilhete(int id)
 {
-        //printf("COMPROU BILHETE ESTE FDP");
         if(simulador.aberto) {
 
                 pthread_mutex_lock(&mutex_comunicacao);
@@ -444,20 +431,15 @@ void bilhete(int id)
                 if (simulador.buff_bilheteira[consome_bilheteira] == 1)
                 {
                         cliente[id].prioridade = 1;
-                        //printf("definiu prioridade1");
                 }
                 else if(simulador.buff_bilheteira[consome_bilheteira]== 2)
                 {
                         cliente[id].prioridade = 0;
-
-                        //printf("definiu prioridade0");
                 }
                 simulador.buff_bilheteira[consome_bilheteira]= 0;
 
                 cliente[id].divertimento = rand()%2;
 
-                //printf("O cliente n%d tem o valor de prioridade %d e o divertimento é %d\n",id, cliente[id].prioridade,cliente[id].divertimento);
-                //printf("│%s • O cliente %d esta na fila para comprar na bilhetaria.\n", gettime(), id);
                 if(cliente[id].prioridade == 1) printf("│%s • O cliente %d comprou bilhete superQuick para andar na montanha ", gettime(), id);
                 else printf("│%s • O cliente %d comprou bilhete para andar na montanha ", gettime(), id);
 
@@ -488,10 +470,6 @@ void bilhete(int id)
 void *vai_bilheteira(int id)
 {
         cliente[id].bilheteira = rand()%100;
-        /*while (cliente[id].bilheteira > simulador.perc_cliente_bilhete) { // ciclo para fazer os cliente perder tempo para irem para a bilhetaria !
-                cliente[id].bilheteira = rand()%100;
-                printf("O cliente n%d está a espera.\n", id);
-           }*/
         sleep(3);
         if (cliente[id].bilheteira < simulador.perc_cliente_bilhete)
         {
@@ -506,7 +484,6 @@ void *vai_bilheteira(int id)
         }
         else{
                 cliente[id].divertimento = 2;
-                //printf("O divertimento do sacana %d", cliente[id].divertimento);
         }
 
 }
@@ -545,25 +522,6 @@ void *trata_cliente(int id)
                         escolhedivertimento(id);
                 }
         }
-        //METER SEMAFORO DO TAMANHO tam_fila_bilheteiraDA FILA DE ESPERA PARA ENTRAR NO PARQUE
-
-
-
-
-        // fazer isto na bilheteira ->cliente[id].divertimento = rand()%3;
-
-        /*  if(cliente[id].prioridade == 1)
-           {
-                  gettime(simulador.contador_time);
-                  printf(", O Cliente nº%d, sem prioridade, entrou no parque.\n",id);
-           }
-           else
-           {
-                  gettime(simulador.contador_time);
-                  printf(", O Cliente nº%d,com prioridade, entrou no parque.\n",id);
-           }*/
-
-        //  sem_post(&s_tam_fila_bilheteira);
 
         pthread_mutex_lock(&mutex_comunicacao);
         sprintf(lineCriacao, "%s;%d;5;b", gettime(),id);
@@ -586,7 +544,7 @@ void *trata_cliente(int id)
 void *cria_cliente(int socket)
 {
         newsockfd = socket;
-        //printf("%s\n",  simulador.clientes_criados);
+        
         for (int i = 0; i < simulador.clientes_criados; i++) {
 
                 if(!simulador.aberto) break;
