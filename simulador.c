@@ -180,6 +180,10 @@ void *cliente_fury(int id)
 
                 sleep(1);
 
+
+
+                sem_post(&s_cliente_verificado);
+                sem_wait(&s_finish_fury); // retira os clientes do fury
                 pthread_mutex_lock(&mutex_comunicacao);
                 sprintf(lineCriacao, "%s;%d;5;e", gettime(),id);
                 printf("│%s • O cliente %d já não se encontra na montanha russa Fury 325.\n", gettime(), id);
@@ -190,9 +194,6 @@ void *cliente_fury(int id)
                 }
                 strcpy(line, " ");
                 pthread_mutex_unlock(&mutex_comunicacao);
-
-                sem_post(&s_cliente_verificado);
-                sem_wait(&s_finish_fury); // retira os clientes do fury
         }
         else{
                 pthread_mutex_lock(&mutex_fury);
